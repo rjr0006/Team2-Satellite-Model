@@ -2,7 +2,7 @@
 ## Makefile generated for component 'asbCubeSat'. 
 ## 
 ## Makefile     : asbCubeSat.mk
-## Generated on : Mon Sep 12 14:59:18 2022
+## Generated on : Mon Sep 12 18:54:09 2022
 ## Final product: $(RELATIVE_PATH_TO_ANCHOR)\asbCubeSat.exe
 ## Product type : executable
 ## 
