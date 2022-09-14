@@ -1,0 +1,46 @@
+@startuml
+left to right direction
+skinparam BackgroundColor transparent
+skinparam componentStyle uml2
+
+title "Simulink to COSMOS\n(Built-In Communication)"
+frame Simulink {
+   component VehicleModel 
+   component MissionConfiguration
+   component Environment
+   component Visualization 
+   component DataPublisher
+}
+
+frame COSMOS {
+    component DataReceipient
+}
+
+frame COSMOS {
+    component DataReceipient
+    component TelemetryProcessor
+    node VisualizationTools {
+        component TelemetryViewer
+        component PacketViewer
+        component TelemetryGrapher
+        component DataViewer
+    }
+}
+
+'Simulink
+[VehicleModel] --> [Environment]
+[Environment] --> [VehicleModel]
+[MissionConfiguration] --> [VehicleModel]
+[VehicleModel] --> [Visualization]
+[VehicleModel] --> [DataPublisher] : Telemetry
+
+' Communication
+[DataPublisher] --> [DataReceipient] : UDP
+
+' COSMOS
+[DataReceipient] --> [TelemetryProcessor] 
+[TelemetryProcessor] --> [TelemetryViewer]
+[TelemetryProcessor] --> [PacketViewer]
+[TelemetryProcessor] --> [TelemetryGrapher]
+[TelemetryProcessor] --> [DataViewer]
+@enduml
