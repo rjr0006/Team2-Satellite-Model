@@ -2,6 +2,8 @@
 
 See the [COSMOS](https://ballaerospace.github.io/cosmos-website/) documentation for all things COSMOS.
 
+**Copy this plugin in the root COSMOS directory**
+
 ## Building the plugin
 
 1. <Path to COSMOS installation>\cosmos-control.bat cosmos rake VERSION=X.Y.Z
@@ -11,5 +13,5 @@ See the [COSMOS](https://ballaerospace.github.io/cosmos-website/) documentation 
 ## Upload plugin
 
 1. Go to localhost:2900/tools/admin
-1. Click the paperclip icon and choose your plugin.gem file
-1. Click Upload
+2. Click the paperclip icon and choose your plugin.gem file
+3. Click Upload
