@@ -8,8 +8,8 @@
 import socket
 import struct 
 
-UDP_IP = "127.0.0.1" # Machine this python app is running on 
-UDP_PORT = 80
+UDP_IP = "10.2.11.91" # Machine this python app is running on 
+UDP_PORT = 25000
 
 sock = socket.socket(socket.AF_INET, # Internet
                      socket.SOCK_DGRAM) # UDP
@@ -22,12 +22,16 @@ sock.bind((UDP_IP, UDP_PORT))
 
 double_size = 8
 num_doubles = 17
+table = ["Lat", "Long", "Alt", "PosX", "PosY", "PosZ", "VelX", "VelY", "VelZ", "QEciX", "QEciY", "QEciZ", "QEciW", "QEcefX","QEcefY","QEcefZ","QEcefW"]
 while True:
     data, addr = sock.recvfrom(8192) # buffer size is 1024 bytes
     
     for i in range(num_doubles):
         start = i * double_size
-        print(struct.unpack('d', data[start : start + double_size]))
+        unpacked_data = struct.unpack('d', data[start : start + double_size])
+        print(table[i], unpacked_data)
+
+    break
 
 
 sock.close()
