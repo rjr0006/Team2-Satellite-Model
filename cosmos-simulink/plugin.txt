@@ -1,9 +1,0 @@
-# Set VARIABLEs here to allow variation in your plugin
-# See https://ballaerospace.github.io/cosmos-website/docs/v5/plugins for more information
-VARIABLE simulink_target_name SIMULINK
-
-# Modify this according to your actual target connection
-# See https://ballaerospace.github.io/cosmos-website/docs/v5/interfaces for more information
-TARGET SIMULINK <%= simulink_target_name %>
-INTERFACE <%= simulink_target_name %>_INT udp_interface.rb 192.168.86.23 80 81 82 nil 128 10.0 nil
-  MAP_TARGET <%= simulink_target_name %>
