@@ -1,0 +1,7 @@
+﻿-IC:\Users\Jordan\MATLAB\Projects\unchanged_cubesat\work\codegen
+-IC:\Users\Jordan\MATLAB\Projects\unchanged_cubesat\work\codegen\slprj\grt\asbCubeSatACS
+-I"C:\Program Files\MATLAB\R2022a\extern\include"
+-I"C:\Program Files\MATLAB\R2022a\simulink\include"
+-I"C:\Program Files\MATLAB\R2022a\rtw\c\src"
+-I"C:\Program Files\MATLAB\R2022a\rtw\c\src\ext_mode\common"
+-IC:\Users\Jordan\MATLAB\Projects\unchanged_cubesat\work\codegen\slprj\grt\_sharedutils
