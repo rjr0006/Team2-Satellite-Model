@@ -1,0 +1,6 @@
+
+# You can define additional telemetry packets in the SYSTEM
+# configuration but it isn't recommended.
+#TELEMETRY INST TEST BIG_ENDIAN "Test packet"
+#  APPEND_ITEM TEST 16 UINT "Test Item"
+
