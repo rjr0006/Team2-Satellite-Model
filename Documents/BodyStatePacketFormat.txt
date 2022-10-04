@@ -1,0 +1,10 @@
+struct bodyState
+{
+  double utcTime;
+  double latLongAlt[3]; //Lat, Long, Alt
+  double x_ecef[3]; //PosX, PosY, PosZ
+  double v_ecef[3]; //VelX, VelY, VelZ
+  double q_eci[4];  //Q_EciX, QEciY, QEciZ, QEciW
+  double q_ecef[4]; //QEcefX, QEcefY, QEcefZ, QEcefW,
+
+};

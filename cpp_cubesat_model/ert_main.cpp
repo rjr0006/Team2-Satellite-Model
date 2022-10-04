@@ -124,6 +124,47 @@ void rt_OneStep(void)
   // Enable interrupts here
 }
 
+#pragma pack(1)
+struct bodyState
+{
+  double utcTime;
+  double latLongAlt[3];
+  double x_ecef[3];
+  double v_ecef[3];
+  double q_eci[4];
+  double q_ecef[4];
+
+};
+
+
+void packLatLongAlt(bodyState * buffer)
+{
+    // lat long
+    memcpy(&buffer->latLongAlt[0], &asbCubeSat_Obj.asbCubeSat_B.ECEFPositiontoLLA_o1, sizeof(double)*2);
+    // alt
+    memcpy(&buffer->latLongAlt[2], &asbCubeSat_Obj.asbCubeSat_B.ECEFPositiontoLLA_o2, sizeof(double));
+}
+
+void packECEFData(bodyState *buffer)
+{
+
+
+
+    memcpy(&buffer->x_ecef, &asbCubeSat_Obj.asbCubeSat_B.X_ecef, sizeof(double)*3);
+    memcpy(&buffer->v_ecef, &asbCubeSat_Obj.asbCubeSat_B.V_ecef, sizeof(double)*3);
+
+
+}
+void packQuaternianData(bodyState *buffer)
+{
+
+
+    memcpy(&buffer->q_eci, &asbCubeSat_Obj.asbCubeSat_B.q_eci2b, sizeof(double)*4);
+    memcpy(&buffer->q_ecef, &asbCubeSat_Obj.asbCubeSat_B.q_ecef2b, sizeof(double)*4);
+
+
+}
+
 //
 // The example main function illustrates what is required by your
 // application code to initialize, execute, and terminate the generated code.
@@ -147,56 +188,72 @@ int_T main(int_T argc, const char *argv[])
   // Simulating the model step behavior (in non real-time) to
   //   simulate model behavior at stop time.
 
+  bool firstFrame = true;
+
+const int bufferframeCount = 4;
+bodyState buffer[bufferframeCount];
+
+bodyState *packbuffer[bufferframeCount];
+
+for ( int i = 0; i < bufferframeCount; i++)
+{
+  packbuffer[i] = &buffer[i];
+}
+
+int frameCounter = 0;
+
   while ((rtmGetErrorStatus(asbCubeSat_Obj.getRTM()) == (nullptr)) &&
          !rtmGetStopRequested(asbCubeSat_Obj.getRTM())) {
-    
+
+frameCounter++;
+
+    // index numnber in pack buffer array is the frame delay of that data getting sent. eg packbuffer[0] gets sent out this frame packbuffer[1] gets 
+    // send next frame
+
+
     rt_OneStep();
-
-#pragma pack(1)
-    struct bodyState
-    {
-      double latLongAlt[3];
-      double x_ecef[3];
-      double v_ecef[3];
-      double q_eci[4];
-      double q_ecef[4];
-
-    };
-    bodyState buffer;
-
-    memset(&buffer, 0, sizeof(buffer));
-
-  
-    // lat long
-    memcpy(&buffer.latLongAlt[0], &asbCubeSat_Obj.asbCubeSat_B.ECEFPositiontoLLA_o1, sizeof(double)*2);
-    // alt
-    memcpy(&buffer.latLongAlt[2], &asbCubeSat_Obj.asbCubeSat_B.ECEFPositiontoLLA_o2, sizeof(double));
-    memcpy(&buffer.x_ecef, &asbCubeSat_Obj.asbCubeSat_B.X_ecef, sizeof(double)*3);
-    memcpy(&buffer.v_ecef, &asbCubeSat_Obj.asbCubeSat_B.V_ecef, sizeof(double)*3);
-    memcpy(&buffer.q_eci, &asbCubeSat_Obj.asbCubeSat_B.q_eci2b, sizeof(double)*4);
-    memcpy(&buffer.q_ecef, &asbCubeSat_Obj.asbCubeSat_B.q_ecef2b, sizeof(double)*4);
-
-    COSMOSTx.send(&buffer, sizeof(buffer));
-    visualizerTx.send(&buffer, sizeof(buffer));
-
-/*
-    for (int i = 0; i < 3; i++)
-      cout << buffer.latLongAlt[i] << ","; 
-
-    for (int i = 0; i < 3; i++)
-      cout << buffer.x_ecef[i] << ","; 
-
-    for (int i = 0; i < 3; i++)
-      cout << buffer.v_ecef[i] << ","; 
     
-    for (int i = 0; i < 4; i++)
-      cout << buffer.q_eci[i] << ","; 
 
-    for (int i = 0; i < 4; i++)
-      cout << buffer.q_ecef[i] << ","; 
+    // pack latLongAlt packing buffer with data from step that just completed
+    // packLatLongAlt(llaPackingBuffer);
 
-    cout << endl;
-*/
+    // pack quat packing buffer with data from step that just completed. This buffer already has ecef from the last frame.
+    packQuaternianData(packbuffer[0]);
+
+    // add timestamp to sending buffer
+    packbuffer[0]->utcTime = asbCubeSat_Obj.asbCubeSat_B.utc_JD;
+
+    packLatLongAlt(packbuffer[2]);
+    packECEFData(packbuffer[2]);
+
+    // send sending buffer
+    if (frameCounter > 6)
+    {
+      COSMOSTx.send(packbuffer[0], sizeof(*packbuffer[0]));
+      visualizerTx.send(packbuffer[0], sizeof(*packbuffer[0]));
+      /*
+      std::cout << std::to_string(packbuffer[0]->utcTime) << " " <<
+      std::to_string(packbuffer[0]->latLongAlt[0]) << " " <<
+      std::to_string(packbuffer[0]->x_ecef[0]) << " " <<
+      std::to_string(packbuffer[0]->v_ecef[0]) << " " <<
+      std::to_string(packbuffer[0]->q_eci[0]) << " " <<
+       std::endl;
+       */
+
+    }
+
+    // swap send/pack buffer pointers
+
+    packbuffer[bufferframeCount-1] = packbuffer[0];
+    for ( int i = 0; i < bufferframeCount-1; i++)
+    {
+        packbuffer[i] = packbuffer[i+1];
+    }
+
+    firstFrame = false;
+
+
+
   }
 
   // Terminate model
