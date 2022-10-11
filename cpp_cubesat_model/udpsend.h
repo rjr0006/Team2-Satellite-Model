@@ -17,10 +17,11 @@ class udpSocket
     udpSocket(std::string ip, uint16_t port);
     ~udpSocket();
     int send( void * data, int lengthInBytes);
+    int recieve(void * buffer, int bufferSize);
     void close();
 
     private:
-    sockaddr_in destination;
+    sockaddr_in addr;
     int sock;
 
 };

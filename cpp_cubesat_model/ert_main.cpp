@@ -21,7 +21,9 @@
 #include <stdio.h>              // This example main program uses printf/fflush
 #include "asbCubeSat.h"                // Model header file
 #include "udpsend.h"
-
+#include <vector>
+#include <string.h>
+#include <string>
 static asbCubeSat asbCubeSat_Obj;      // Instance of model class
 
 //
@@ -174,9 +176,58 @@ void packQuaternianData(bodyState *buffer)
 using namespace std;
 int_T main(int_T argc, const char *argv[])
 {
+
+
+  vector<udpSocket*> txsockets;
+  udpSocket* rxsocket;
+    int i =1;
+    while(i < argc)
+    {
+
+       if (strcmp(argv[i], "-tx") == 0)
+       {
+           i++;
+           string str(argv[i]);
+           string host = str.substr(0, str.find(":"));
+           string portstr = str.substr(str.find(":")+1, str.length() -str.find(":") );
+           int port = 0;
+           try
+           {
+            port = stoi(portstr);
+           }
+           catch (exception e)
+           {
+            cout << "Invalid Port: " << portstr << endl;
+            return 0;
+           }
+           txsockets.push_back(new udpSocket(host, port));
+           
+       }
+       else if (strcmp(argv[i], "-rx") == 0)
+       {
+           i++;
+           string str(argv[i]);
+            int port = 0;
+           try
+           {
+            port = stoi(str);
+           }
+           catch (exception e)
+           {
+            cout << "Invalid Port: " << str << endl;
+            return 0;
+           }
+           rxsocket = new udpSocket("0.0.0.0", port);
+       }
+       else
+       {
+           cout << "Invalid parameters. Expected input: -tx host:port or -rx port" << endl;
+           return 0;
+       } 
+       i++;
+    }
+
   //cout << "Lat, Long, Alt, PosX, PosY, PosZ, VelX, VelY, VelZ, QEciX, QEciY, QEciZ, QEciW, QEcefX, QEcefY, QEcefZ, QEcefW" << endl;
-  udpSocket COSMOSTx("192.168.86.31", 25000);
-  udpSocket visualizerTx("192.168.86.31", 25001);
 
   // Unused arguments
   (void)(argc);
@@ -212,6 +263,9 @@ frameCounter++;
 
 
     rt_OneStep();
+
+    char commandBuffer[1024];
+    rxsocket->recieve(&commandBuffer, sizeof(commandBuffer));
     
 
     // pack latLongAlt packing buffer with data from step that just completed
@@ -229,8 +283,10 @@ frameCounter++;
     // send sending buffer
     if (frameCounter > 6)
     {
-      COSMOSTx.send(packbuffer[0], sizeof(*packbuffer[0]));
-      visualizerTx.send(packbuffer[0], sizeof(*packbuffer[0]));
+      for (udpSocket *s : txsockets)
+      {
+        s->send(packbuffer[0], sizeof(*packbuffer[0]));
+      }
       /*
       std::cout << std::to_string(packbuffer[0]->utcTime) << " " <<
       std::to_string(packbuffer[0]->latLongAlt[0]) << " " <<
