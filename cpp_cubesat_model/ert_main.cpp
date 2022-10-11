@@ -241,17 +241,17 @@ int_T main(int_T argc, const char *argv[])
 
   bool firstFrame = true;
 
-const int bufferframeCount = 4;
-bodyState buffer[bufferframeCount];
+  const int bufferframeCount = 4;
+  bodyState buffer[bufferframeCount];
 
-bodyState *packbuffer[bufferframeCount];
+  bodyState *packbuffer[bufferframeCount];
 
-for ( int i = 0; i < bufferframeCount; i++)
-{
-  packbuffer[i] = &buffer[i];
-}
+  for ( int i = 0; i < bufferframeCount; i++)
+  {
+    packbuffer[i] = &buffer[i];
+  }
 
-int frameCounter = 0;
+  int frameCounter = 0;
 
   while ((rtmGetErrorStatus(asbCubeSat_Obj.getRTM()) == (nullptr)) &&
          !rtmGetStopRequested(asbCubeSat_Obj.getRTM())) {
@@ -263,9 +263,13 @@ frameCounter++;
 
 
     rt_OneStep();
-
-    char commandBuffer[1024];
-    rxsocket->recieve(&commandBuffer, sizeof(commandBuffer));
+    // 0=standby 1=earth 2=sun
+    uint32_T pointingCommand;
+    if (rxsocket->recieve(&pointingCommand, sizeof(pointingCommand)) > 0)
+    {
+      //cast away weird floating point to double conversions
+      asbCubeSat_Obj.asbCubeSat_B.MultiportSwitch = (double)(pointingCommand);
+    }
     
 
     // pack latLongAlt packing buffer with data from step that just completed

@@ -26771,7 +26771,7 @@ void asbCubeSat::step0()               // Sample time: [0.0s, 0.0s]
   // MultiPortSwitch: '<S3>/Multiport Switch' incorporates:
   //   Constant: '<S3>/Mode'
 
-  asbCubeSat_B.MultiportSwitch = 1.0;
+  //asbCubeSat_B.MultiportSwitch = 1.0;
   if (rtmIsMajorTimeStep((&asbCubeSat_M))) {
     // UnitDelay generated from: '<S111>/Unit Delay'
     asbCubeSat_B.utc_JD = asbCubeSat_DW.UnitDelay_1_DSTATE;
@@ -28814,9 +28814,12 @@ void asbCubeSat::step0()               // Sample time: [0.0s, 0.0s]
     // End of If: '<S174>/If1'
 
     // ModelReference generated from: '<S113>/Attitude Control System'
-    Attitude_Control_SystemMDLOBJ1.step(&asbCubeSat_B.X_eci[0],
-      &asbCubeSat_B.V_eci[0], &asbCubeSat_B.q_eci2b[0],
-      &asbCubeSat_B.MultiportSwitch, &asbCubeSat_B.UnitConversion_f[0],
+    Attitude_Control_SystemMDLOBJ1.step(
+      &asbCubeSat_B.X_eci[0],
+      &asbCubeSat_B.V_eci[0],
+      &asbCubeSat_B.q_eci2b[0],
+      &asbCubeSat_B.MultiportSwitch,
+      &asbCubeSat_B.UnitConversion_f[0],
       &asbCubeSat_B.FSWOut.ACSOut);
 
     // Sum: '<S112>/Sum1'

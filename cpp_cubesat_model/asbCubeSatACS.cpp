@@ -23,6 +23,8 @@
 #include "asbCubeSatACS_types.h"
 #include <cmath>
 #include "rt_atan2d_snf.h"
+#include <stdio.h>
+#include <iostream>
 
 extern "C" {
 
@@ -30,6 +32,9 @@ extern "C" {
 
 }
 #include "asbCubeSatACS_private.h"
+
+
+using namespace std;
 
 // Named constants for Chart: '<S1>/Pointing Mode Selection'
 const uint8_T asbCubeSatACS_IN_Earth{ 1U };
@@ -123,10 +128,12 @@ void asbCubeSatACS::step(const real_T rtu_SensorsOut_X_eci[3], const real_T
   real_T rtb_fcn2;
   real_T rtb_fcn5;
 
+
   // Chart: '<S1>/Pointing Mode Selection'
   if (asbCubeSatACS_DW.is_active_c1_asbCubeSatACS == 0U) {
     asbCubeSatACS_DW.is_active_c1_asbCubeSatACS = 1U;
     asbCubeSatACS_DW.is_c1_asbCubeSatACS = asbCubeSatACS_IN_Off;
+
 
     // Merge: '<S3>/ Merge 1' incorporates:
     //   Constant: '<S4>/Unit quat'
