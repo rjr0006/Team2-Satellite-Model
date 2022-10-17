@@ -4,6 +4,8 @@
 # NOTE: This line must be modified to match how your actual target connects.
 # See http://cosmosrb.com/docs/interfaces/ for more information.
 INTERFACE COSMOS_SIMULINK_INT udp_interface.rb localhost 25001 25000
+# tcp interface
+# INTERFACE COSMOS_SIMULINK_INT tcpip_client_interface.rb localhost 25001 25000 10.0 10.0
   TARGET COSMOS_SIMULINK
   # Add in the OverrideProtocol to allow override_tlm("COSMOS_SIMULINK STATUS STRING = 'HI'")
   PROTOCOL READ_WRITE OverrideProtocol
