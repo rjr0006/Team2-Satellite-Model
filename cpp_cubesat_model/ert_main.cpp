@@ -24,6 +24,10 @@
 #include <vector>
 #include <string.h>
 #include <string>
+#include <cstdlib>
+#include <thread>
+#include <unistd.h>
+#include <iomanip>
 static asbCubeSat asbCubeSat_Obj;      // Instance of model class
 
 //
@@ -174,10 +178,70 @@ void packQuaternianData(bodyState *buffer)
 // illustrates how you do this relative to initializing the model.
 //
 using namespace std;
+
+  int frameCounter = 0;
+    // 0=standby 1=earth 2=sun
+    uint32_T pointingCommand = 0;
+void updateDisplay(bodyState* state[])
+{
+  while (true)
+  {
+    std::system("clear");
+    std::cout.flush();
+    cout << "| Model Elapsed Time " << setw(25)<< frameCounter << "s |" << endl;
+    cout << "|-----------------------------------------------|" << endl;
+
+
+    if (pointingCommand == 0)
+    {
+    cout << "| Pointing Mode Cmd |                 0=Standby |" << endl;
+    }   
+    else if (pointingCommand == 1)
+    {
+    cout << "| Pointing Mode Cmd |                   1=Earth |" << endl;
+    }    
+    else if (pointingCommand == 2)
+    {
+    cout << "| Pointing Mode Cmd |                     2=Sun |" << endl;
+    }
+    else
+    {
+    cout << "| Pointing Mode Cmd |" << setw(17) <<  pointingCommand << "(invalid) |" << endl;  
+    }
+    if (asbCubeSat_Obj.asbCubeSat_B.MultiportSwitch == 0 || asbCubeSat_Obj.asbCubeSat_B.MultiportSwitch == 1 )
+    {
+    cout << "| Orientation       |              Earth Facing |" << endl;
+    }
+    else if (asbCubeSat_Obj.asbCubeSat_B.MultiportSwitch == 2 )
+    {
+    cout << "| Orientation       |                Sun Facing |" << endl;
+    }
+    cout << "| UTC Time          |" << setw(26) << fixed << setprecision(6) << state[0]->utcTime << " |" << endl;
+    cout << "| Lat (deg)         |" << setw(26) << fixed << setprecision(6) << state[0]->latLongAlt[0] << " |" << endl;
+    cout << "| Long (deg)        |" << setw(26) << fixed << setprecision(6) << state[0]->latLongAlt[1] << " |" << endl;
+    cout << "| Alt (m)           |" << setw(26) << fixed << setprecision(6) << state[0]->latLongAlt[2] << " |" << endl;
+    cout << "| Pos X             |" << setw(26) << fixed << setprecision(6) << state[0]->x_ecef[0] << " |" << endl;
+    cout << "| Pos Y             |" << setw(26) << fixed << setprecision(6) << state[0]->x_ecef[1] << " |" << endl;
+    cout << "| Pos Z             |" << setw(26) << fixed << setprecision(6) << state[0]->x_ecef[2] << " |" << endl;
+    cout << "| Q ECI X           |" << setw(26) << fixed << setprecision(6) << state[0]->q_eci[0] << " |" << endl;
+    cout << "| Q ECI Y           |" << setw(26) << fixed << setprecision(6) << state[0]->q_eci[1] << " |" << endl;
+    cout << "| Q ECI Z           |" << setw(26) << fixed << setprecision(6) << state[0]->q_eci[2] << " |" << endl;
+    cout << "| Q ECI W           |" << setw(26) << fixed << setprecision(6) << state[0]->q_eci[3] << " |" << endl;
+    cout << "| Q ECEF X          |" << setw(26) << fixed << setprecision(6) << state[0]->q_ecef[0] << " |" << endl;
+    cout << "| Q ECEF Y          |" << setw(26) << fixed << setprecision(6) << state[0]->q_ecef[1] << " |" << endl;
+    cout << "| Q ECEF Z          |" << setw(26) << fixed << setprecision(6) << state[0]->q_ecef[2] << " |" << endl;
+    cout << "| Q ECEF W          |" << setw(26) << fixed << setprecision(6) << state[0]->q_ecef[3] << " |" << endl;
+    cout << "|-----------------------------------------------|" << endl;
+    sleep(1);
+  }
+}
+
+
 int_T main(int_T argc, const char *argv[])
 {
 
-
+  std::cout.flush();
+  cout << "Model Starting.." << endl;
   vector<udpSocket*> txsockets;
   udpSocket* rxsocket;
     int i =1;
@@ -229,9 +293,7 @@ int_T main(int_T argc, const char *argv[])
 
   //cout << "Lat, Long, Alt, PosX, PosY, PosZ, VelX, VelY, VelZ, QEciX, QEciY, QEciZ, QEciW, QEcefX, QEcefY, QEcefZ, QEcefW" << endl;
 
-  // Unused arguments
-  (void)(argc);
-  (void)(argv);
+
 
   // Initialize model
   asbCubeSat_Obj.initialize();
@@ -251,8 +313,12 @@ int_T main(int_T argc, const char *argv[])
     packbuffer[i] = &buffer[i];
   }
 
-  int frameCounter = 0;
+  cout << "startring thread " << endl;
+  std::thread displayThread(updateDisplay, &packbuffer[0]);
 
+
+  
+  cout << "entering loop" << endl;
   while ((rtmGetErrorStatus(asbCubeSat_Obj.getRTM()) == (nullptr)) &&
          !rtmGetStopRequested(asbCubeSat_Obj.getRTM())) {
 
@@ -262,9 +328,9 @@ frameCounter++;
     // send next frame
 
 
+
     rt_OneStep();
-    // 0=standby 1=earth 2=sun
-    uint32_T pointingCommand;
+
     if (rxsocket->recieve(&pointingCommand, sizeof(pointingCommand)) > 0)
     {
       //cast away weird floating point to double conversions
@@ -291,6 +357,8 @@ frameCounter++;
       {
         s->send(packbuffer[0], sizeof(*packbuffer[0]));
       }
+
+      
       /*
       std::cout << std::to_string(packbuffer[0]->utcTime) << " " <<
       std::to_string(packbuffer[0]->latLongAlt[0]) << " " <<

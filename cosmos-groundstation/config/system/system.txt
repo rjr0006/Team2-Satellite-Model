@@ -3,7 +3,7 @@
 
 AUTO_DECLARE_TARGETS
 # DECLARE_TARGET SYSTEM
-DECLARE_TARGET COSMOS_SIMULINK
+DECLARE_TARGET CUBESAT
 
 # Listen Hosts - Ip addresses or hostnames to listen on when running the tools
 # Set these to 0.0.0.0 if you need external connections from other computers
