@@ -1,0 +1,15 @@
+.vs/
+Binaries/
+Build/
+# Don't ignore icon files in Build
+!Build/**/*.ico
+DerivedDataCache/
+Intermediate/
+Saved/
+
+*.sln
+*_BuiltData.uasset
+*.exe
+
+# Ignore the users settings files
+UserSettings.txt
