@@ -6,20 +6,48 @@
 #include "Interfaces/IPv4/IPv4Address.h"
 #include "Sockets.h"
 
+namespace
+{
+	void ParseBodyStateData(uint8* Data, FBodyState& BodyState)
+	{
+		memcpy(&BodyState.UtcTime, Data, sizeof(double));
+		Data += sizeof(double);
+
+		memcpy(&BodyState.LatLongAlt, Data, sizeof(FVector3d));
+		Data += sizeof(FVector3d);
+
+		memcpy(&BodyState.Ecef, Data, sizeof(FVector3d));
+		Data += sizeof(FVector3d);
+
+		memcpy(&BodyState.EcefVelocity, Data, sizeof(FVector3d));
+		Data += sizeof(FVector3d);
+
+		memcpy(&BodyState.EciRotation, Data, sizeof(FQuat));
+		Data += sizeof(FQuat);
+
+		memcpy(&BodyState.EcefRotation, Data, sizeof(FQuat));
+	}
+}
+
+AOrbiterDataService::AOrbiterDataService()
+{
+	PrimaryActorTick.bCanEverTick = true;
+}
+
 void AOrbiterDataService::BeginPlay()
 {
 	Super::BeginPlay();
 	Connect();
 }
 
+
 void AOrbiterDataService::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (!SocketPtr) 
+	if (!SocketPtr)
 		return;
 
-	//Binary Array!
 	TArray<uint8> ReceivedData;
 
 	uint32 Size;
@@ -29,6 +57,9 @@ void AOrbiterDataService::Tick(float DeltaTime)
 
 		int32 Read = 0;
 		SocketPtr->Recv(ReceivedData.GetData(), ReceivedData.Num(), Read);
+
+		FBodyState NewState;
+		ParseBodyStateData(ReceivedData.GetData(), NewState);
 
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Data Read! %d"), ReceivedData.Num()));
 	}
@@ -49,8 +80,6 @@ void AOrbiterDataService::Connect()
 	TSharedRef<FInternetAddr> addr = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
 	addr->SetIp(ip.Value);
 	addr->SetPort(port);
-
-
 
 	if (!SocketPtr->Bind(*addr)) {
 		if (GEngine) {
