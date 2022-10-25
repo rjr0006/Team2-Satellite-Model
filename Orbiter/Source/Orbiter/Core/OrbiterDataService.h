@@ -47,19 +47,23 @@ public:
 	/* An actor that will be spawned if the entity type is not mapped. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FSoftClassPath SatelliteActorClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString IpAddress { FString("127.0.0.1") };
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Port { 8080 };
 
 	UPROPERTY()
 	TObjectPtr<AGeoReferencingSystem> CachedGeoSystem;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<AActor> Satellite;
+	// Could be changed to a TArray for multiple satellites. 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UOrbiterMovementComponent> MovementComponent;
 
 
 private:
 	TSharedPtr<FSocket> SocketPtr;
 	
-	UPROPERTY()
-	TObjectPtr<AActor> Satellite;
 
-	// Could be changed to a TArray for multiple satellites. 
-	UPROPERTY()
-	TObjectPtr<UOrbiterMovementComponent> MovementComponent;
 
 };

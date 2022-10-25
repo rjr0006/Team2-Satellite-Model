@@ -13,8 +13,8 @@ namespace
 {
 	void ParseBodyStateData(uint8* Data, FBodyState& BodyState)
 	{
-		memcpy(&BodyState.UtcTime, Data, sizeof(double));
-		Data += sizeof(double);
+		//memcpy(&BodyState.UtcTime, Data, sizeof(double));
+		//Data += sizeof(double);
 
 		memcpy(&BodyState.LatLongAlt, Data, sizeof(FVector3d));
 		Data += sizeof(FVector3d);
@@ -52,7 +52,7 @@ void AOrbiterDataService::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UGameplayStatics::GetActorOfClass(this, AGeoReferencingSystem::StaticClass());
+	CachedGeoSystem = AGeoReferencingSystem::GetGeoReferencingSystem(this);
 	Connect();
 }
 
@@ -99,15 +99,13 @@ void AOrbiterDataService::Connect()
 
 	SocketPtr = MakeShareable(ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateSocket(NAME_DGram, TEXT("default"), false));
 
-	FString address = TEXT("127.0.0.1");
-	int32 port = 8080;
-	FIPv4Address ip;
-	FIPv4Address::Parse(address, ip);
-	TSharedRef<FInternetAddr> addr = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
-	addr->SetIp(ip.Value);
-	addr->SetPort(port);
+	FIPv4Address IP;
+	FIPv4Address::Parse(IpAddress, IP);
+	TSharedRef<FInternetAddr> Addr = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
+	Addr->SetIp(IP.Value);
+	Addr->SetPort(Port);
 
-	if (!SocketPtr->Bind(*addr)) {
+	if (!SocketPtr->Bind(*Addr)) {
 		if (GEngine) {
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Failed to bind socket");
 		}
