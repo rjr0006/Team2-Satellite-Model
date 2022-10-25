@@ -12,6 +12,7 @@ public class Orbiter : ModuleRules
 			"Core", 
 			"CoreUObject", 
 			"Engine", 
+			"GeoReferencing",
 			"InputCore",
 			"Networking",
 			"Sockets"
