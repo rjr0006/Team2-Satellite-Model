@@ -20,7 +20,9 @@ public:
 
 	void RegisterWithService(AOrbiterDataService* InDataService);
 	void TickMovement(float DeltaTime, const FBodyState& NewState);
-		
+	UFUNCTION(BlueprintCallable)
+	void OrientationStates(FRotator Rotation, FTransform EcefToEnu, FVector LLA, FRotator& OutRotation);
+
 public:
 	UPROPERTY()
 	TObjectPtr<AOrbiterDataService> DataService;

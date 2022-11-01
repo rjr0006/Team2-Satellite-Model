@@ -13,8 +13,8 @@ namespace
 {
 	void ParseBodyStateData(uint8* Data, FBodyState& BodyState)
 	{
-		//memcpy(&BodyState.UtcTime, Data, sizeof(double));
-		//Data += sizeof(double);
+		memcpy(&BodyState.UtcTime, Data, sizeof(double));
+		Data += sizeof(double);
 
 		memcpy(&BodyState.LatLongAlt, Data, sizeof(FVector3d));
 		Data += sizeof(FVector3d);
@@ -25,10 +25,14 @@ namespace
 		memcpy(&BodyState.EcefVelocity, Data, sizeof(FVector3d));
 		Data += sizeof(FVector3d);
 
-		memcpy(&BodyState.EciRotation, Data, sizeof(FQuat));
-		Data += sizeof(FQuat);
+		//memcpy(&BodyState.EciRotation, Data, sizeof(FQuat));
+		//Data += sizeof(FQuat);
 
-		memcpy(&BodyState.EcefRotation, Data, sizeof(FQuat));
+		//memcpy(&BodyState.EcefRotation, Data, sizeof(FQuat));
+		memcpy(&BodyState.ECEFRot, Data, sizeof(FRotator));
+
+
+
 	}
 
 
@@ -46,6 +50,32 @@ namespace
 AOrbiterDataService::AOrbiterDataService()
 {
 	PrimaryActorTick.bCanEverTick = true;
+}
+
+AOrbiterDataService* AOrbiterDataService::GetDataService(UObject* WorldContextObject)
+{
+	AOrbiterDataService* Actor = nullptr;
+
+	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	{
+		TArray<AActor*> Actors;
+		UGameplayStatics::GetAllActorsOfClass(World, AOrbiterDataService::StaticClass(), Actors);
+		int NbActors = Actors.Num();
+		if (NbActors == 0)
+		{
+			UE_LOG(LogTemp, Error, TEXT("OrbiterDataService actor not found. Please add one to your world to configure your data service."));
+		}
+		else if (NbActors > 1)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Multiple OrbiterDataService actors found. Only one actor should be used to configure your data service"));
+		}
+		else
+		{
+			Actor = Cast<AOrbiterDataService>(Actors[0]);
+		}
+	}
+
+	return Actor;
 }
 
 void AOrbiterDataService::BeginPlay()
@@ -67,15 +97,21 @@ void AOrbiterDataService::Tick(float DeltaTime)
 	TArray<uint8> ReceivedData;
 
 	uint32 Size;
+	FBodyState NewState;
+
+	SimulationTime += DeltaTime;
+
+	bool bReceivedUpdated(false);
 	while (SocketPtr->HasPendingData(Size))
 	{
 		ReceivedData.Init(FMath::Min(Size, 65507u), Size);
 
 		int32 Read = 0;
-		SocketPtr->Recv(ReceivedData.GetData(), ReceivedData.Num(), Read);
+		bReceivedUpdated = SocketPtr->Recv(ReceivedData.GetData(), ReceivedData.Num(), Read);
 
-		FBodyState NewState;
 		ParseBodyStateData(ReceivedData.GetData(), NewState);
+
+		SimulationTime = NewState.UtcTime;
 
 		// We do not have a reference to the satellite actor so we need to spawn it. 
 		if (!Satellite)
@@ -83,11 +119,11 @@ void AOrbiterDataService::Tick(float DeltaTime)
 			CreateSatellite();
 		}
 
-		if (MovementComponent)
-		{
-			MovementComponent->TickMovement(DeltaTime, NewState);
-		}
+	}
 
+	if (MovementComponent && bReceivedUpdated)
+	{
+		MovementComponent->TickMovement(DeltaTime, NewState);
 	}
 }
 void AOrbiterDataService::Connect()
@@ -105,16 +141,7 @@ void AOrbiterDataService::Connect()
 	Addr->SetIp(IP.Value);
 	Addr->SetPort(Port);
 
-	if (!SocketPtr->Bind(*Addr)) {
-		if (GEngine) {
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Failed to bind socket");
-		}
-	}
-	else {
-		if (GEngine) {
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Socket connect succesuflly");
-		}
-	}
+	bIsConnected = SocketPtr->Bind(*Addr);
 }
 
 
@@ -124,6 +151,7 @@ void AOrbiterDataService::Disconnect()
 	{
 		SocketPtr->Close();
 		SocketPtr.Reset();
+		bIsConnected = false;
 	}
 }
 
@@ -147,3 +175,4 @@ void AOrbiterDataService::CreateSatellite()
 		
 	}
 }
+

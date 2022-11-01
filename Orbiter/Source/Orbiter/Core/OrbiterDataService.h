@@ -21,6 +21,8 @@ public:
 	FVector3d EcefVelocity;
 	FQuat EciRotation;
 	FQuat EcefRotation;
+	FRotator ECEFRot;
+
 };
 
 /**
@@ -32,11 +34,16 @@ class ORBITER_API AOrbiterDataService : public AInfo
 	GENERATED_BODY()
 
 public:
+
+	UFUNCTION(BlueprintPure, Category = "OrbiterDataService", meta = (WorldContext = "WorldContextObject"))
+	static AOrbiterDataService* GetDataService(UObject* WorldContextObject);
+
 	AOrbiterDataService();
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	void Connect();
 	void Disconnect();
+
 
 private:
 	void CreateSatellite();
@@ -51,7 +58,8 @@ public:
 	FString IpAddress { FString("127.0.0.1") };
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Port { 8080 };
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsConnected {false};
 	UPROPERTY()
 	TObjectPtr<AGeoReferencingSystem> CachedGeoSystem;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -59,6 +67,9 @@ public:
 	// Could be changed to a TArray for multiple satellites. 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UOrbiterMovementComponent> MovementComponent;
+
+	UPROPERTY()
+	float SimulationTime;
 
 
 private:
