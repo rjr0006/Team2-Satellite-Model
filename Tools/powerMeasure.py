@@ -27,4 +27,6 @@ with open(filename, 'w') as csvfile:
         except DeviceRangeError as e:
             print(e)
             break
-        time.sleep(0.01 - ((time.clock_gettime_ns(clock) - curTime)/1000000000))
+        time.sleep(0.0095 - ((time.clock_gettime_ns(clock) - curTime)/1000000000))
+        while time.clock_gettime_ns(clock) - curTime < 10000000:
+            curTime
