@@ -1,1 +1,1 @@
-%cd%/Package/Windows/Orbiter.exe -ResX=720 -ResY=720 -WINDOWED
+%cd%/Package/Windows/Orbiter.exe -ResX=720 -ResY=720 -WINDOWED -tx=192.168.4.4:25000
