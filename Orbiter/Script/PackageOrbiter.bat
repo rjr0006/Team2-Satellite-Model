@@ -1,0 +1,1 @@
+"C:\Program Files\Epic Games\UE_5.0\Engine\Build\BatchFiles\RunUAT.bat" BuildCookRun -project=%cd%/../Orbiter.uproject -noP4 -platform=Win64 -clientconfig=Shipping -serverconfig=Shipping -cook -allmaps -build -stage -archive -nocompile -archivedirectory=%cd%/Package/

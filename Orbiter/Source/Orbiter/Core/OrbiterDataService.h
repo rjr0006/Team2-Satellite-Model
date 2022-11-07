@@ -10,6 +10,7 @@ class SocketPtr;
 class AGeoReferencingSystem;
 class UOrbiterMovementComponent;
 
+
 USTRUCT(BlueprintType)
 struct FBodyState
 {
@@ -24,6 +25,9 @@ public:
 	FRotator ECEFRot;
 
 };
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FSatelliteSpawned, TObjectPtr<AActor>);
+
 
 /**
  * 
@@ -44,6 +48,7 @@ public:
 	void Connect();
 	void Disconnect();
 
+	FSatelliteSpawned& GetSatelliteSpawnedDelegate() { return OnSatelliteSpawned; }
 
 private:
 	void CreateSatellite();
@@ -74,7 +79,5 @@ public:
 
 private:
 	TSharedPtr<FSocket> SocketPtr;
-	
-
-
+	FSatelliteSpawned OnSatelliteSpawned;
 };

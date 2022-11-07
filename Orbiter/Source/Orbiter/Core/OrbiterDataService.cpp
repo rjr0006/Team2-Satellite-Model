@@ -18,18 +18,52 @@ namespace
 
 		memcpy(&BodyState.LatLongAlt, Data, sizeof(FVector3d));
 		Data += sizeof(FVector3d);
+		/*double Latitude, Longitude, Altitude;
+		memcpy(&Latitude, Data, sizeof(double));
+		Data += sizeof(double);
+		memcpy(&Longitude, Data, sizeof(double));
+		Data += sizeof(double);
+		memcpy(&Altitude, Data, sizeof(double));
+		Data += sizeof(double);*/
+
 
 		memcpy(&BodyState.Ecef, Data, sizeof(FVector3d));
 		Data += sizeof(FVector3d);
+		/*double EcefX, EcefY, EcefZ;
+		memcpy(&EcefX, Data, sizeof(double));
+		Data += sizeof(double);
+		memcpy(&EcefY, Data, sizeof(double));
+		Data += sizeof(double);
+		memcpy(&EcefZ, Data, sizeof(double));
+		Data += sizeof(double);*/
 
 		memcpy(&BodyState.EcefVelocity, Data, sizeof(FVector3d));
 		Data += sizeof(FVector3d);
+		//double EcefVX, EcefVY, EcefVZ;
+		//memcpy(&EcefVX, Data, sizeof(double));
+		//Data += sizeof(double);
+		//memcpy(&EcefVY, Data, sizeof(double));
+		//Data += sizeof(double);
+		//memcpy(&EcefVZ, Data, sizeof(double));
+		//Data += sizeof(double);
+
+		memcpy(&BodyState.ECEFRot, Data, sizeof(FRotator));
+		/*double RotZ, RotY, RotX;
+		memcpy(&RotZ, Data, sizeof(double));
+		Data += sizeof(double);
+		memcpy(&RotY, Data, sizeof(double));
+		Data += sizeof(double);
+		memcpy(&RotX, Data, sizeof(double));
+		Data += sizeof(double);*/
+
+
+		bool hey = false;
 
 		//memcpy(&BodyState.EciRotation, Data, sizeof(FQuat));
 		//Data += sizeof(FQuat);
 
 		//memcpy(&BodyState.EcefRotation, Data, sizeof(FQuat));
-		memcpy(&BodyState.ECEFRot, Data, sizeof(FRotator));
+		//memcpy(&BodyState.ECEFRot, Data, sizeof(FRotator));
 
 
 
@@ -54,11 +88,11 @@ AOrbiterDataService::AOrbiterDataService()
 
 AOrbiterDataService* AOrbiterDataService::GetDataService(UObject* WorldContextObject)
 {
-	AOrbiterDataService* Actor = nullptr;
+	TObjectPtr<AOrbiterDataService> Actor = nullptr;
 
 	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
 	{
-		TArray<AActor*> Actors;
+		TArray<TObjectPtr<AActor>> Actors;
 		UGameplayStatics::GetAllActorsOfClass(World, AOrbiterDataService::StaticClass(), Actors);
 		int NbActors = Actors.Num();
 		if (NbActors == 0)
@@ -172,7 +206,9 @@ void AOrbiterDataService::CreateSatellite()
 		// Notify all components that the owner registered
 		MovementComponent = Cast<UOrbiterMovementComponent>(Satellite->GetComponentByClass(UOrbiterMovementComponent::StaticClass()));
 		MovementComponent->RegisterWithService(this);
-		
+
+
+		OnSatelliteSpawned.Broadcast(Satellite);		
 	}
 }
 

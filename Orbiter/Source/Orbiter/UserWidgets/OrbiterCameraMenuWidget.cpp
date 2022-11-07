@@ -16,9 +16,8 @@ void UOrbiterCameraMenuWidget::NativeConstruct()
 		return;
 
 	// Build the map
-	CameraModeToNameMap.Add(EOrbiterCameraMode::SatelliteFixed, FString("Satellite Fixed"));
-	CameraModeToNameMap.Add(EOrbiterCameraMode::NorthPole, FString("North Pole"));
 	CameraModeToNameMap.Add(EOrbiterCameraMode::FreeFly, FString("Free Fly"));
+	CameraModeToNameMap.Add(EOrbiterCameraMode::SatelliteFixed, FString("Satellite Fixed"));
 
 	if (CameraComboBox)
 	{

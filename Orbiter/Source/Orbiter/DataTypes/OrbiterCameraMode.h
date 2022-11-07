@@ -7,9 +7,8 @@
 UENUM(BlueprintType)
 enum class EOrbiterCameraMode : uint8
 {
-	SatelliteFixed	= 0,
-	NorthPole		= 1,
-	FreeFly			= 2,
+	FreeFly			= 0,
+	SatelliteFixed	= 1,
 	MODE_MAX		= 3
 };
 

@@ -20,10 +20,29 @@ public:
 
 	void RegisterWithService(AOrbiterDataService* InDataService);
 	void TickMovement(float DeltaTime, const FBodyState& NewState);
+	void OrientationStates(FTransform EcefToEnu, FVector3d LLA, FRotator Rotation, FRotator& OutRotation);
+
 	UFUNCTION(BlueprintCallable)
-	void OrientationStates(FRotator Rotation, FTransform EcefToEnu, FVector LLA, FRotator& OutRotation);
+	void ConvertRotation(FRotator& OutRotation);
 
 public:
 	UPROPERTY()
 	TObjectPtr<AOrbiterDataService> DataService;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FQuat TestQuat { (-0.306335, 0.881598, -0.036695, 0.357207) };
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FVector TestLoc{ (-5032439.114494, -2329652.185219, 3902868.001784) };
+
+
+
+	//UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	//	FQuat TestQuat {
+	//	(-0.306335, 0.881598, -0.036695, 0.357207)
+	//};
+	//UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	//	FVector TestLoc {
+	//	(-5762649.7257627770, -1682708.3766899903, 3156028.2696684157)
+	//};
+
 };

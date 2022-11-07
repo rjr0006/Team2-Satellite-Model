@@ -1,0 +1,1 @@
+%cd%/Package/Windows/Orbiter.exe -ResX=720 -ResY=720 -WINDOWED
