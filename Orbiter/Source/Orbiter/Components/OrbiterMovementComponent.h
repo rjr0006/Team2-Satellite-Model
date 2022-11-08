@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -9,23 +8,47 @@
 class AOrbiterDataService;
 struct FBodyState;
 
+/**
+ * @brief Orbiter movement can be added to an actor to position it with 
+ * body state data. 
+ */
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ORBITER_API UOrbiterMovementComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
+	/* Constructor */
 	UOrbiterMovementComponent();
 
+	/**
+	 * @brief Register this component with the data service. 
+	 * 
+	 * @param InDataService - The service to register with
+	 */
 	void RegisterWithService(AOrbiterDataService* InDataService);
+	/**
+	 * @brief Update the componenet
+	 * 
+	 * @param DeltaTime - The time between the last update. 
+	 * @param NewState 	- The new state data. 
+	 */
 	void TickMovement(float DeltaTime, const FBodyState& NewState);
+	/**
+	 * @brief Compute the orientation of the satellite
+	 * 
+	 * @param EcefToEnu 	- The Ecef to Enu frame
+	 * @param LLA 			- Latitude, Longitude, and Altitude
+	 * @param Rotation 		- Body state euler angles
+	 * @param OutRotation 	- Computed rotation
+	 */
 	void OrientationStates(FTransform EcefToEnu, FVector3d LLA, FRotator Rotation, FRotator& OutRotation);
 
 	UFUNCTION(BlueprintCallable)
 	void ConvertRotation(FRotator& OutRotation);
 
 public:
+ 	/* Cached data service */
 	UPROPERTY()
 	TObjectPtr<AOrbiterDataService> DataService;
 
@@ -33,16 +56,4 @@ public:
 	FQuat TestQuat { (-0.306335, 0.881598, -0.036695, 0.357207) };
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FVector TestLoc{ (-5032439.114494, -2329652.185219, 3902868.001784) };
-
-
-
-	//UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	//	FQuat TestQuat {
-	//	(-0.306335, 0.881598, -0.036695, 0.357207)
-	//};
-	//UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	//	FVector TestLoc {
-	//	(-5762649.7257627770, -1682708.3766899903, 3156028.2696684157)
-	//};
-
 };

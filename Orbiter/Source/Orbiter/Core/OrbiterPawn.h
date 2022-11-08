@@ -1,12 +1,14 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "GameFramework/SpectatorPawn.h"
 #include "OrbiterPawn.generated.h"
 
+/* Forward Declarations */
 class AGeoReferencingSystem;
 class UInputComponent;
+class USpringArmComponent;
+class UCameraComponent;
 
 UCLASS(Config = Game)
 class ORBITER_API AOrbiterPawn : public ASpectatorPawn
@@ -83,28 +85,28 @@ protected:
 	float OrbitScrollMultiplier{ 1.f };
 
 	/* The current flight increment value used to adjust the pawn flight speed. */
-	UPROPERTY(VisibleAnywhere, Category=DashMovement)
+	UPROPERTY(VisibleAnywhere, Category=Movement)
 	float FlightIncrement{0.f};
 	/* The curve used to update the flight speed of the pawn movment component. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DashMovement, meta = (AllowPrivateAccess = "true"))
-	UCurveFloat* FlightCurve;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
+	TObjectPtr<UCurveFloat> FlightCurve;
 	/*Sets the flight speed relative to the flight curve.*/
 	float FlightScale = 1.0f;
 	/* Georeferencing system used to get altitude. */
 	UPROPERTY()
-	AGeoReferencingSystem* GeoRefSystem;
+	TObjectPtr<AGeoReferencingSystem> GeoRefSystem;
 
 	/** 1p camera component. */
 	UPROPERTY(VisibleAnywhere, Category=Camera)
-	class UCameraComponent* FirstPersonCamera;
+	TObjectPtr<UCameraComponent> FirstPersonCamera;
 	/** 3p camera component. */
 	UPROPERTY(VisibleAnywhere, Category = Camera)
-	class UCameraComponent* ThirdPersonCamera;
+	TObjectPtr<UCameraComponent> ThirdPersonCamera;
 	/** 3p camera boom component. */
 	UPROPERTY(VisibleAnywhere, Category = Camera)
-	class USpringArmComponent* ThirdPersonSpringArm;
+	TObjectPtr<USpringArmComponent> ThirdPersonSpringArm;
 	/** Cached pointer to the thing we're spectating, or nullptr if we're free-flying. */
 	UPROPERTY(VisibleAnywhere)
-		AActor* SpectateTarget;
+	TObjectPtr<AActor> SpectateTarget;
 
 };

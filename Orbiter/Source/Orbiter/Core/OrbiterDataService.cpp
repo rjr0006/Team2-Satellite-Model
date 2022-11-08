@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "Orbiter/Core/OrbiterDataService.h"
 #include "SocketSubsystem.h"

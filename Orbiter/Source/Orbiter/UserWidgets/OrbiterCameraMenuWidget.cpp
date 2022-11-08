@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "Orbiter/UserWidgets/OrbiterCameraMenuWidget.h"
 #include "Orbiter/Core/OrbiterPlayerController.h"

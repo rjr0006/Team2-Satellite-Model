@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -33,15 +32,15 @@ private:
 	void OnConnectionButtonReleased();
 protected:
 	UPROPERTY(meta = (BindWidget))
-	UEditableText* AddressTextBox;
+	TObjectPtr<UEditableText> AddressTextBox;
 	UPROPERTY(meta = (BindWidget))
-	UEditableText* PortTextBox;
+	TObjectPtr<UEditableText> PortTextBox;
 	UPROPERTY(meta = (BindWidget))
-	UButton* ConnectionButton;
+	TObjectPtr<UButton> ConnectionButton;
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* ConnectionText;
+	TObjectPtr<UTextBlock> ConnectionText;
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* StatusTextBlock;
+	TObjectPtr<UTextBlock> StatusTextBlock;
 
 private:
 	UPROPERTY()
