@@ -56,10 +56,6 @@ protected:
 	void ActivateThirdPersonCamera();
 
 
-	/* Updates the orbit radius and location. */
-	void UpdateOrbitLocation();
-
-
 	/** Sets orbit lengths based on the spectate target. */
 	void CalculateOrbits(AActor& Target);
 

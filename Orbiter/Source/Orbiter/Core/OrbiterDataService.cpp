@@ -9,6 +9,8 @@
 
 namespace
 {
+	static const FString CommandLineArg("tx");
+
 	void ParseBodyStateData(uint8* Data, FBodyState& BodyState)
 	{
 		memcpy(&BodyState.UtcTime, Data, sizeof(double));
@@ -115,9 +117,23 @@ void AOrbiterDataService::BeginPlay()
 	Super::BeginPlay();
 
 	CachedGeoSystem = AGeoReferencingSystem::GetGeoReferencingSystem(this);
+	
+	FString FormattedArgument = FString::Printf(TEXT("-%s="), *CommandLineArg);
+	FString ArgumentResult;
+	const TCHAR* CommandLineValue = FCommandLine::Get();
+	if (FParse::Value(CommandLineValue, *FormattedArgument, ArgumentResult))
+	{
+		FString AddressArg;
+		FString PortArg;
+		if (ArgumentResult.Split(TEXT(":"), &AddressArg, &PortArg))
+		{
+			IpAddress = AddressArg;
+			Port = FCString::Atoi(*PortArg);
+		}
+	}
+
 	Connect();
 }
-
 
 void AOrbiterDataService::Tick(float DeltaTime)
 {
