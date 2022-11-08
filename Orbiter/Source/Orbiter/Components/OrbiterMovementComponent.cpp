@@ -1,12 +1,13 @@
 
 #include "Orbiter/Components/OrbiterMovementComponent.h"
-#include "Orbiter/Core/OrbiterDataService.h"
 #include "GeoReferencingSystem.h"
+#include "Orbiter/Core/OrbiterDataService.h"
 #include <cmath>
 
 namespace 
 {
-#define KDIS_PI 3.14159265358979323846
+    #define KDIS_PI 3.14159265358979323846
+
     FBodyState PerformDeadReckoning(const float DeltaTime, const FBodyState& InBodyState)
 	{
 		FBodyState UpdatedState;
@@ -118,11 +119,7 @@ namespace
 // Sets default values for this component's properties
 UOrbiterMovementComponent::UOrbiterMovementComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
-
-	// ...
 }
 
 void UOrbiterMovementComponent::RegisterWithService(AOrbiterDataService* InDataService)
@@ -142,7 +139,6 @@ void UOrbiterMovementComponent::TickMovement(float DeltaTime, const FBodyState& 
 
 	const float SimTime = DataService->SimulationTime;
 	const float Statetime = NewState.UtcTime;
-
 	const float UpdateDeltaTime = DataService->SimulationTime - NewState.UtcTime;
 	
 	const FBodyState DisBasedStateResult = PerformDeadReckoning(UpdateDeltaTime, NewState);
@@ -234,14 +230,7 @@ void UOrbiterMovementComponent::ConvertRotation(FRotator& OutRotation)
 
     OutRotation = FRotator(PitchDegrees, HeadingDegrees - 90, RollDegrees);
 
-
-
     //FRotator Rotation = TestQuat.Rotator();
-
-
     //OutRotation = FRotator(Rotation.Pitch, Rotation.Yaw - 90, Rotation.Roll);
-
-
-
 }
 

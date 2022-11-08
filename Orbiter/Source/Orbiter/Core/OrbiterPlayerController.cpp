@@ -18,13 +18,6 @@ void AOrbiterPlayerController::BeginPlay()
 	{
 		DataService->GetSatelliteSpawnedDelegate().AddUObject(this, &AOrbiterPlayerController::OnSatelliteSpawned);
 	}
-
-	TArray<AActor*> Actors;
-	UGameplayStatics::GetAllActorsOfClassWithTag(this, AActor::StaticClass(), FName("Satellite"), Actors);
-	if (Actors.Num() > 0)
-	{
-		CachedSatellite = Actors[0];
-	}
 }
 
 void AOrbiterPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -74,8 +67,7 @@ void AOrbiterPlayerController::SetSatelliteCameraMode(const EOrbiterCameraMode C
 		default:
 			break;
 		}
-		}
-
+	}
 }
 
 void AOrbiterPlayerController::OnSatelliteSpawned(TObjectPtr<AActor> Satellite)

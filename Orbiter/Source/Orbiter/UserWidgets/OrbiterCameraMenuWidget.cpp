@@ -1,7 +1,7 @@
 
 #include "Orbiter/UserWidgets/OrbiterCameraMenuWidget.h"
-#include "Orbiter/Core/OrbiterPlayerController.h"
 #include "Components/ComboBoxString.h"
+#include "Orbiter/Core/OrbiterPlayerController.h"
 #include "Orbiter/DataTypes/OrbiterCameraMode.h"
 
 void UOrbiterCameraMenuWidget::NativeConstruct()
@@ -13,7 +13,7 @@ void UOrbiterCameraMenuWidget::NativeConstruct()
 	if (!OwningPlayer)
 		return;
 
-	// Build the map
+	// Build the mode to display name map. 
 	CameraModeToNameMap.Add(EOrbiterCameraMode::FreeFly, FString("Free Fly"));
 	CameraModeToNameMap.Add(EOrbiterCameraMode::SatelliteFixed, FString("Satellite Fixed"));
 
@@ -29,6 +29,7 @@ void UOrbiterCameraMenuWidget::NativeConstruct()
 			CameraComboBox->AddOption(Option);
 		}
 
+		// Set the initial option. 
 		const FString* NamePtr = CameraModeToNameMap.Find(OwningPlayer->SatelliteCameraMode);
 		CameraComboBox->SetSelectedOption(*NamePtr);
 	}

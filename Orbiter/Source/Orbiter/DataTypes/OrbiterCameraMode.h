@@ -9,6 +9,6 @@ enum class EOrbiterCameraMode : uint8
 {
 	FreeFly			= 0,
 	SatelliteFixed	= 1,
-	MODE_MAX		= 3
+	MODE_MAX		= 2
 };
 

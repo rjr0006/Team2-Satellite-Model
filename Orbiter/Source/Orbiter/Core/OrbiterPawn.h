@@ -5,18 +5,23 @@
 #include "OrbiterPawn.generated.h"
 
 /* Forward Declarations */
+class UCameraComponent;
 class AGeoReferencingSystem;
 class UInputComponent;
 class USpringArmComponent;
-class UCameraComponent;
 
+/**
+ * Pawn that moves around the scene processes user controls. 
+ * Also, contains the camera system. 
+ * 
+ */
 UCLASS(Config = Game)
 class ORBITER_API AOrbiterPawn : public ASpectatorPawn
 {
 	GENERATED_UCLASS_BODY()
 
 public:
-
+	/* ASpectatorPawn Overrides */
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
@@ -30,31 +35,34 @@ public:
 	virtual void MoveRight(float Val) override;
 	virtual void MoveUp_World(float Val) override;
 	/**
- * Modifies the 3p camera's spring arm length in the desired direction, zooming into or out
- * from the spectate target.
- */
+	 * Modifies the 3p camera's spring arm length in the desired direction, zooming into or out
+	 * from the spectate target.
+	 */
 	void AdjustOrbitDistance(float Direction);
 	/** Resets the 3p camera's spring arm length to the default value we calculated. */
 	void ResetOrbitDistance();
 
 	/**
- * Gets a matrix that rotates from the world space to the pawn's local (ENU) space
- * based on the world's coordinate system settings.
- */
+	 * Gets a matrix that rotates from the world space to the pawn's local (ENU) space
+	 * based on the world's coordinate system settings.
+	 */
 	FMatrix GetEnuFrame() const;
 
+	/** 
+	 * @brief Set the spectate target
+	 * 
+	 * @param Target - actor to spectate. 
+	 * @param bUseFirstPerson - Whether to use the first or third person camera. 
+	*/
 	void SetSpectateTarget(AActor* Target, bool bUseFirstPerson);
-
 
 protected:
 	/** Update the pawn flight speed using the flight float curve. */
 	virtual void UpdateFlightSpeed();
 
-
 	/** Directly activate camera, deactivating the other. */
 	void ActivateFirstPersonCamera();
 	void ActivateThirdPersonCamera();
-
 
 	/** Sets orbit lengths based on the spectate target. */
 	void CalculateOrbits(AActor& Target);
@@ -66,7 +74,7 @@ protected:
 	void AdjustInitialOrientation();
 
 protected:
-		/* True origin of level. */
+	/* True origin of level. */
 	UPROPERTY(VisibleAnywhere)
 	FVector TrueOrigin;
 
@@ -87,7 +95,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
 	TObjectPtr<UCurveFloat> FlightCurve;
 	/*Sets the flight speed relative to the flight curve.*/
-	float FlightScale = 1.0f;
+	float FlightScale {1.0f};
 	/* Georeferencing system used to get altitude. */
 	UPROPERTY()
 	TObjectPtr<AGeoReferencingSystem> GeoRefSystem;

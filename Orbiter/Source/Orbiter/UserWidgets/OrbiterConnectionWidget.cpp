@@ -1,9 +1,9 @@
 
 #include "Orbiter/UserWidgets/OrbiterConnectionWidget.h"
-#include "Orbiter/Core/OrbiterDataService.h"
 #include "Components/EditableText.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
+#include "Orbiter/Core/OrbiterDataService.h"
 
 void UOrbiterConnectionWidget::NativeConstruct()
 {
@@ -11,6 +11,7 @@ void UOrbiterConnectionWidget::NativeConstruct()
 
 	CachedDataService = AOrbiterDataService::GetDataService(this);
 
+	// Bind to the widget delegates. 
 	if (AddressTextBox)
 	{
 		AddressTextBox->OnTextCommitted.AddDynamic(this, &UOrbiterConnectionWidget::OnAddressCommitted);
@@ -24,11 +25,14 @@ void UOrbiterConnectionWidget::NativeConstruct()
 		ConnectionButton->OnReleased.AddDynamic(this, &UOrbiterConnectionWidget::OnConnectionButtonReleased);
 	}
 
+	// Initialize the content in the widgets. 
 	if (CachedDataService)
 	{
-		AddressTextBox->SetText(FText::FromString(CachedDataService->IpAddress));
-		PortTextBox->SetText(FText::FromString(FString::FromInt(CachedDataService->Port)));
+		const FText AddressText = FText::FromString(CachedDataService->IpAddress);
+		const FText PortText = FText::FromString(FString::FromInt(CachedDataService->Port));
 		const FText ConnectedText = CachedDataService->bIsConnected ? FText::FromString("Disconnect") : FText::FromString("Connect");
+		AddressTextBox->SetText(AddressText);
+		PortTextBox->SetText(PortText);		
 		ConnectionText->SetText(ConnectedText);
 	}
 }
@@ -37,6 +41,7 @@ void UOrbiterConnectionWidget::NativeDestruct()
 {
 	Super::NativeDestruct();
 
+	// Remove delegate bindings. 
 	if (AddressTextBox)
 	{
 		AddressTextBox->OnTextCommitted.RemoveAll(this);
@@ -57,8 +62,7 @@ void UOrbiterConnectionWidget::OnAddressCommitted(const FText& Address, ETextCom
 	if (!CachedDataService)
 		return;	
 
-	// Could add a check for a valid address. 
-
+	// TODO: Check for valid address format 
 	CachedDataService->IpAddress = Address.ToString();
 }
 
@@ -67,9 +71,7 @@ void UOrbiterConnectionWidget::OnPortCommitted(const FText& Port, ETextCommit::T
 	if (!CachedDataService)
 		return;
 
-
 	CachedDataService->Port = FCString::Atoi(*Port.ToString());
-
 }
 
 void UOrbiterConnectionWidget::OnConnectionButtonReleased()
@@ -81,12 +83,10 @@ void UOrbiterConnectionWidget::OnConnectionButtonReleased()
 	{
 		CachedDataService->Disconnect();
 		ConnectionText->SetText(FText::FromString("Connect"));
-
 	}
 	else
 	{
 		CachedDataService->Connect();
 		ConnectionText->SetText(FText::FromString("Disconnect"));
-
 	}
 }

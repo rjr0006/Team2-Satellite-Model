@@ -1,11 +1,11 @@
 
 #include "Orbiter/Core/OrbiterDataService.h"
-#include "SocketSubsystem.h"
-#include "Interfaces/IPv4/IPv4Address.h"
-#include "Sockets.h"
-#include "Orbiter/Components/OrbiterMovementComponent.h"
-#include "Kismet/GameplayStatics.h"
 #include "GeoReferencingSystem.h"
+#include "Interfaces/IPv4/IPv4Address.h"
+#include "Kismet/GameplayStatics.h"
+#include "Orbiter/Components/OrbiterMovementComponent.h"
+#include "Sockets.h"
+#include "SocketSubsystem.h"
 
 namespace
 {
@@ -56,19 +56,12 @@ namespace
 		memcpy(&RotX, Data, sizeof(double));
 		Data += sizeof(double);*/
 
-
-		bool hey = false;
-
 		//memcpy(&BodyState.EciRotation, Data, sizeof(FQuat));
 		//Data += sizeof(FQuat);
 
 		//memcpy(&BodyState.EcefRotation, Data, sizeof(FQuat));
 		//memcpy(&BodyState.ECEFRot, Data, sizeof(FRotator));
-
-
-
 	}
-
 
 	void CreateMovementComponentForActor(AActor* Actor)
 	{
@@ -118,6 +111,7 @@ void AOrbiterDataService::BeginPlay()
 
 	CachedGeoSystem = AGeoReferencingSystem::GetGeoReferencingSystem(this);
 	
+	// parse connection command line arguments. 
 	FString FormattedArgument = FString::Printf(TEXT("-%s="), *CommandLineArg);
 	FString ArgumentResult;
 	const TCHAR* CommandLineValue = FCommandLine::Get();
@@ -144,22 +138,21 @@ void AOrbiterDataService::Tick(float DeltaTime)
 
 	TArray<uint8> ReceivedData;
 
-	uint32 Size;
-	FBodyState NewState;
+	uint32 PacketSize;
 
 	SimulationTime += DeltaTime;
 
 	bool bReceivedUpdated(false);
-	while (SocketPtr->HasPendingData(Size))
+	while (SocketPtr->HasPendingData(PacketSize))
 	{
-		ReceivedData.Init(FMath::Min(Size, 65507u), Size);
+		ReceivedData.Init(FMath::Min(PacketSize, 65507u), PacketSize);
 
-		int32 Read = 0;
-		bReceivedUpdated = SocketPtr->Recv(ReceivedData.GetData(), ReceivedData.Num(), Read);
+		int32 BytesReceived = 0;
+		bReceivedUpdated = SocketPtr->Recv(ReceivedData.GetData(), ReceivedData.Num(), BytesReceived);
 
-		ParseBodyStateData(ReceivedData.GetData(), NewState);
+		ParseBodyStateData(ReceivedData.GetData(), CachedState);
 
-		SimulationTime = NewState.UtcTime;
+		SimulationTime = CachedState.UtcTime;
 
 		// We do not have a reference to the satellite actor so we need to spawn it. 
 		if (!Satellite)
@@ -169,11 +162,12 @@ void AOrbiterDataService::Tick(float DeltaTime)
 
 	}
 
-	if (MovementComponent && bReceivedUpdated)
+	if (MovementComponent)
 	{
-		MovementComponent->TickMovement(DeltaTime, NewState);
+		MovementComponent->TickMovement(DeltaTime, CachedState);
 	}
 }
+
 void AOrbiterDataService::Connect()
 {
 	if (SocketPtr)
@@ -221,7 +215,7 @@ void AOrbiterDataService::CreateSatellite()
 		MovementComponent = Cast<UOrbiterMovementComponent>(Satellite->GetComponentByClass(UOrbiterMovementComponent::StaticClass()));
 		MovementComponent->RegisterWithService(this);
 
-
+		// Notify all the satellite actor has been spawned. 
 		OnSatelliteSpawned.Broadcast(Satellite);		
 	}
 }

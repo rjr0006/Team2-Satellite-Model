@@ -1,11 +1,10 @@
 
 #include "Orbiter/Core/OrbiterPawn.h"
 #include "Camera/CameraComponent.h"
+#include "Components/SphereComponent.h"
+#include "GameFramework/SpectatorPawnMovement.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GeoReferencingSystem.h"
-#include "GameFramework/SpectatorPawnMovement.h"
-#include "Components/SphereComponent.h"
-
 
 namespace
 {
@@ -74,7 +73,6 @@ void AOrbiterPawn::Tick(float DeltaTime)
 
 }
 
-// Bind button presses to functions
 void AOrbiterPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -94,8 +92,6 @@ void AOrbiterPawn::SetPlayerDefaults()
 {
 	Super::SetPlayerDefaults();
 
-	// ControlRotation is set in about 7 different places on startup. This is the last function I (pjb) 
-	// could find that was called on the Pawn on startup that would let us override the starting orientation
 	AdjustInitialOrientation();
 }
 
@@ -257,17 +253,12 @@ void AOrbiterPawn::SetSpectateTarget(AActor* Target, bool bUseFirstPerson)
 {
 	APlayerController* PC = Cast<APlayerController>(Controller);
 	if (!PC)
-	{
 		return;
-	}
 
 	if (SpectateTarget == Target)
-	{
 		return;
-	}
 
 	SpectateTarget = Target;
-
 
 	if (Target)
 	{
@@ -297,7 +288,6 @@ void AOrbiterPawn::SetSpectateTarget(AActor* Target, bool bUseFirstPerson)
 		CalculateOrbits(*Target);
 
 		ThirdPersonSpringArm->TargetArmLength = DefaultOrbitLength;
-		//ThirdPersonSpringArm->PreviousArmLength = ThirdPersonSpringArm->TargetArmLength;
 	}
 	else
 	{
@@ -317,7 +307,5 @@ void AOrbiterPawn::SetSpectateTarget(AActor* Target, bool bUseFirstPerson)
 
 		DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	}
-	// Update the arm's orbit target so it doesn't block the arm trace
-	//ThirdPersonSpringArm->OrbitTarget = Target;
 }
 

@@ -6,8 +6,8 @@
 
 /* Forward Declarations */
 class AGeoReferencingSystem;
-class UOrbiterMovementComponent;
 class FSocket;
+class UOrbiterMovementComponent;
 
 /* Notify subscribers when a satellite has been created. */
 DECLARE_MULTICAST_DELEGATE_OneParam(FSatelliteSpawned, TObjectPtr<AActor>);
@@ -33,7 +33,6 @@ public:
 	/* Earth Centered Earth Fixed Rotation */
 	FQuat EcefRotation;
 	FRotator ECEFRot;
-
 };
 
 
@@ -98,4 +97,7 @@ private:
 	TSharedPtr<FSocket> SocketPtr;
 	/* Delegate for when a satellite is spawned */
 	FSatelliteSpawned OnSatelliteSpawned;
+
+	/* Cached satellite body state */
+	FBodyState CachedState;
 };
