@@ -26,7 +26,6 @@ namespace
 		memcpy(&Altitude, Data, sizeof(double));
 		Data += sizeof(double);*/
 
-
 		memcpy(&BodyState.Ecef, Data, sizeof(FVector3d));
 		Data += sizeof(FVector3d);
 		/*double EcefX, EcefY, EcefZ;
@@ -47,7 +46,10 @@ namespace
 		//memcpy(&EcefVZ, Data, sizeof(double));
 		//Data += sizeof(double);
 
-		memcpy(&BodyState.ECEFRot, Data, sizeof(FRotator));
+		memcpy(&BodyState.EcefRotation, Data, sizeof(FQuat));
+		//memcpy(&BodyState.EcefRotation, Data, sizeof(FQuat));
+		//memcpy(&BodyState.ECEFRot, Data, sizeof(FRotator));
+
 		/*double RotZ, RotY, RotX;
 		memcpy(&RotZ, Data, sizeof(double));
 		Data += sizeof(double);
@@ -56,11 +58,6 @@ namespace
 		memcpy(&RotX, Data, sizeof(double));
 		Data += sizeof(double);*/
 
-		//memcpy(&BodyState.EciRotation, Data, sizeof(FQuat));
-		//Data += sizeof(FQuat);
-
-		//memcpy(&BodyState.EcefRotation, Data, sizeof(FQuat));
-		//memcpy(&BodyState.ECEFRot, Data, sizeof(FRotator));
 	}
 
 	void CreateMovementComponentForActor(AActor* Actor)
