@@ -74,9 +74,9 @@ public:
 	/* The ip address the system the visualizer is running on */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString IpAddress { FString("127.0.0.1") };
-	/* Connection port */
+	/* Default connection port */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 Port { 8080 };
+	int32 Port { 24999 };
 	/* Whether the service is connected or not. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsConnected {false};

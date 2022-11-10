@@ -122,6 +122,16 @@ void AOrbiterDataService::BeginPlay()
 			Port = FCString::Atoi(*PortArg);
 		}
 	}
+	else
+	{
+		// Get the local ip address if it wasn't specified in the command line. 
+		bool bCanBind(false);
+		TSharedRef<FInternetAddr> LocalAddress = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->GetLocalHostAddr(*GLog, bCanBind);
+		if (LocalAddress->IsValid())
+		{
+			IpAddress = LocalAddress->ToString(false);
+		}
+	}
 
 	Connect();
 }
