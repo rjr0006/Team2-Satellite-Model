@@ -114,6 +114,14 @@ namespace
         return static_cast<Type>(Deg * (KDIS_PI / 180.0));
     }
 
+    FRotator QuatToRotator(const FQuat& Quat)
+    {      
+        double roll = FMath::Atan2(2.0 * Quat.Y * Quat.W - 2.0 * Quat.X * Quat.Z, 1.0 - 2.0 * Quat.Y * Quat.Y - 2.0 * Quat.Z * Quat.Z);
+        double pitch = FMath::Atan2(2.0 * Quat.X * Quat.W - 2.0 * Quat.Y * Quat.Z, 1.0 - 2.0 * Quat.X * Quat.X - 2.0 * Quat.Z * Quat.Z);
+        double yaw = FMath::Asin(2.0 * Quat.X * Quat.Y + 2.0 * Quat.Z * Quat.W);
+        return FRotator(pitch, yaw, roll);
+    }
+
 }
 
 // Sets default values for this component's properties
@@ -148,7 +156,7 @@ void UOrbiterMovementComponent::TickMovement(float DeltaTime, const FBodyState& 
 	GeoSystem->ECEFToEngine(NewState.Ecef, Location);
 
 
-    FRotator Rot;
+    FRotator Rot = QuatToRotator(NewState.EcefRotation);
    
     //OrientationStates(GeoSystem->GetTangentTransformAtECEFLocation(NewState.Ecef), NewState.LatLongAlt, NewState.ECEFRot, Rot);
 
@@ -162,8 +170,8 @@ void UOrbiterMovementComponent::TickMovement(float DeltaTime, const FBodyState& 
 
 
 	// Finally set the final location.
-	//GetOwner()->SetActorLocationAndRotation(Location, Rot);
-    GetOwner()->SetActorLocation(Location);
+	GetOwner()->SetActorLocationAndRotation(Location, Rot);
+    //GetOwner()->SetActorLocation(Location);
 
 }
 
