@@ -5,6 +5,7 @@
 #include "GameFramework/SpectatorPawnMovement.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GeoReferencingSystem.h"
+#include "Orbiter/Core/OrbiterPlayerController.h"
 
 namespace
 {
@@ -85,6 +86,8 @@ void AOrbiterPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		InputComponent->BindAxis("Turn", this, &AOrbiterPawn::AddControllerYawInput);
 		InputComponent->BindAxis("LookUp", this, &AOrbiterPawn::AddControllerPitchInput);
 		InputComponent->BindAxis("AdjustOrbitDistance", this, &AOrbiterPawn::AdjustOrbitDistance);
+		InputComponent->BindAction("ToggleControls", IE_Pressed, this, &AOrbiterPawn::ShowControls);
+		InputComponent->BindAction("ToggleControls", IE_Released, this, &AOrbiterPawn::HideControls);
 	}
 }
 
@@ -111,6 +114,21 @@ void AOrbiterPawn::AdjustInitialOrientation()
 	}
 }
 
+void AOrbiterPawn::ShowControls()
+{
+	if (auto* OrbiterController = Cast<AOrbiterPlayerController>(GetController()))
+	{
+		OrbiterController->SetControlsVisibility(true);
+	}
+}
+
+void AOrbiterPawn::HideControls()
+{
+	if (auto* OrbiterController = Cast<AOrbiterPlayerController>(GetController()))
+	{
+		OrbiterController->SetControlsVisibility(false);
+	}
+}
 
 FRotator AOrbiterPawn::GetViewRotation() const
 {
@@ -129,10 +147,9 @@ void AOrbiterPawn::MoveForward(float Val)
 {
 	 if (Val != 0.f)
 	{
-		FRotator const ControlSpaceRot = GetViewRotation();
-
-		AddMovementInput(FRotationMatrix(ControlSpaceRot).GetScaledAxis(EAxis::X), Val);
-	}
+		 FRotator const ControlSpaceRot = GetViewRotation();
+		 AddMovementInput(FRotationMatrix(ControlSpaceRot).GetScaledAxis(EAxis::X), Val);
+	 }
 }
 
 void AOrbiterPawn::MoveRight(float Val)
@@ -157,7 +174,7 @@ void AOrbiterPawn::UpdateFlightSpeed()
 {
 	if (GeoRefSystem)
 	{
-		FCartesianCoordinates ECEF;
+		FVector ECEF;
 		FGeographicCoordinates Geo;
 		GeoRefSystem->EngineToECEF(GetActorLocation(), ECEF);
 		GeoRefSystem->ECEFToGeographic(ECEF, Geo);

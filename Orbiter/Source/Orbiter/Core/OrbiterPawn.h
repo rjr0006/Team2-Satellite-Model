@@ -73,6 +73,11 @@ protected:
 	 */
 	void AdjustInitialOrientation();
 
+private:
+	/* Toggle the controls widget on / off. */
+	void ShowControls();
+	void HideControls();
+
 protected:
 	/* True origin of level. */
 	UPROPERTY(VisibleAnywhere)

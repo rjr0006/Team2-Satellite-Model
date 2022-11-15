@@ -78,6 +78,9 @@ void UOrbiterConnectionWidget::OnConnectionButtonReleased()
 	if (!CachedDataService)
 		return;
 
+	const bool bIsConnected = CachedDataService->bIsConnected;
+	bIsConnected ? CachedDataService->Disconnect() : CachedDataService->Connect();
+
 	SetConnectionStatus(CachedDataService->bIsConnected);
 }
 
@@ -85,14 +88,12 @@ void UOrbiterConnectionWidget::SetConnectionStatus(const bool& bIsConnected)
 {
 	if (bIsConnected)
 	{
-		CachedDataService->Disconnect();
 		ConnectionText->SetText(FText::FromString("Connect"));
 		StatusTextBlock->SetText(FText::FromString("Not Connected"));
 		StatusTextBlock->SetColorAndOpacity(FLinearColor::Red);
 	}
 	else
 	{
-		CachedDataService->Connect();
 		ConnectionText->SetText(FText::FromString("Disconnect"));
 		StatusTextBlock->SetText(FText::FromString("Connected"));
 		StatusTextBlock->SetColorAndOpacity(FLinearColor::Green);

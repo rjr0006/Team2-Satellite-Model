@@ -4,10 +4,19 @@
 #include "Orbiter/Core/OrbiterDataService.h"
 #include "Orbiter/Core/OrbiterPawn.h"
 #include "Kismet/GameplayStatics.h"
+#include "Blueprint/UserWidget.h"
 
 AOrbiterPlayerController::AOrbiterPlayerController()
 {
 	bShowMouseCursor = true;
+
+	// Load the connection widget.
+	static ConstructorHelpers::FClassFinder<UUserWidget> ControlsWidgetObject(TEXT("/Game/Orbiter/UserWidgets/WBP_OrbiterControls"));
+	ControlsWidgetClass = ControlsWidgetObject.Class;
+
+	// Load the controls widget.
+	static ConstructorHelpers::FClassFinder<UUserWidget> HudWidgetObject(TEXT("/Game/Orbiter/UserWidgets/WBP_OrbiterHeadsUpDisplay"));
+	HudWidgetClass = HudWidgetObject.Class;
 }
 
 void AOrbiterPlayerController::BeginPlay()
@@ -18,6 +27,14 @@ void AOrbiterPlayerController::BeginPlay()
 	{
 		DataService->GetSatelliteSpawnedDelegate().AddUObject(this, &AOrbiterPlayerController::OnSatelliteSpawned);
 	}
+
+
+	HudWidget = CreateWidget(this, HudWidgetClass, FName("HudWidget"));
+	HudWidget->AddToViewport(0);
+	// Place the controls widget on top of the hud widget.  
+	ControlsWidget = CreateWidget(this, ControlsWidgetClass, FName("ControlsWidget"));
+	ControlsWidget->AddToViewport(1);	
+	ControlsWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void AOrbiterPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -28,7 +45,6 @@ void AOrbiterPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	{
 		DataService->GetSatelliteSpawnedDelegate().RemoveAll(this);
 	}
-
 }
 
 void AOrbiterPlayerController::Tick(float DeltaTime)
@@ -68,6 +84,15 @@ void AOrbiterPlayerController::SetSatelliteCameraMode(const EOrbiterCameraMode C
 			break;
 		}
 	}
+}
+
+void AOrbiterPlayerController::SetControlsVisibility(const bool bIsVisible)
+{
+	if (!ControlsWidget)
+		return;
+
+	ESlateVisibility NewVis = bIsVisible ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed;
+	ControlsWidget->SetVisibility(NewVis);
 }
 
 void AOrbiterPlayerController::OnSatelliteSpawned(TObjectPtr<AActor> Satellite)

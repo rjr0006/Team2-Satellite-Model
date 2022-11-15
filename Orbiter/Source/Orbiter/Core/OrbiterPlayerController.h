@@ -6,6 +6,7 @@
 
 /* Forward Declarations */
 enum class EOrbiterCameraMode : uint8;
+class UUserWidget;
 
 /**
  * Controls the pawn and manages world origin rebasing. 
@@ -31,7 +32,12 @@ public:
 	 * @param CameraMode - satellite camera mode. 
 	 */
 	void SetSatelliteCameraMode(const EOrbiterCameraMode CameraMode);
-
+	/**
+	* @brief Set the visibility of the controls widget. 
+	* 
+	* @param bIsVisible - Whether to show or hide the controls widget. 
+	*/
+	void SetControlsVisibility(const bool bIsVisible);
 private:
 	/**
 	 * @brief Callback for when the satellite object is spawned. 
@@ -56,4 +62,17 @@ private:
 	/* The cached satellite object. */
 	UPROPERTY()
 	TObjectPtr<AActor> CachedSatellite;
+	/* Control widget class used to create the blueprint derived widget. */
+	UPROPERTY()
+	TObjectPtr<UClass> ControlsWidgetClass;
+	/* Hud widget class used to create the blueprint derived widget. */
+	UPROPERTY()
+	TObjectPtr<UClass> HudWidgetClass;
+	/* Controls Widget */
+	UPROPERTY()
+	TObjectPtr<UUserWidget> ControlsWidget;
+	/* Hud Widget */
+	UPROPERTY()
+	TObjectPtr<UUserWidget> HudWidget;
+
 };
