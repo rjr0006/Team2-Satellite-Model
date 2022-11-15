@@ -242,7 +242,6 @@ FMatrix AOrbiterPawn::GetEnuFrame() const
 {
 	if (!GeoRefSystem)
 	{
-		UE_LOG(LogTemp, Error, TEXT("%s GeoReferencingSystem actor not found."), ANSI_TO_TCHAR(__FUNCTION__));
 		return FMatrix::Identity;
 	}
 

@@ -60,7 +60,7 @@ namespace
 
 	}
 
-	void CreateMovementComponentForActor(AActor* Actor)
+	void CreateMovementComponentForActor(TObjectPtr<AActor> Actor)
 	{
 		auto MoveComp = NewObject<UOrbiterMovementComponent>(Actor);
 		if (MoveComp)
@@ -206,7 +206,7 @@ void AOrbiterDataService::Disconnect()
 
 void AOrbiterDataService::CreateSatellite()
 {
-	UClass* SatelliteClassToSpawn = SatelliteActorClass.TryLoadClass<UObject>();
+	TObjectPtr<UClass> SatelliteClassToSpawn = SatelliteActorClass.TryLoadClass<UObject>();
 	if (SatelliteClassToSpawn)
 	{
 		Satellite = GetWorld()->SpawnActor(SatelliteClassToSpawn);
@@ -226,4 +226,3 @@ void AOrbiterDataService::CreateSatellite()
 		OnSatelliteSpawned.Broadcast(Satellite);		
 	}
 }
-

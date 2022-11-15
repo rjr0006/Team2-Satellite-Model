@@ -30,10 +30,9 @@ void UOrbiterConnectionWidget::NativeConstruct()
 	{
 		const FText AddressText = FText::FromString(CachedDataService->IpAddress);
 		const FText PortText = FText::FromString(FString::FromInt(CachedDataService->Port));
-		const FText ConnectedText = CachedDataService->bIsConnected ? FText::FromString("Disconnect") : FText::FromString("Connect");
 		AddressTextBox->SetText(AddressText);
 		PortTextBox->SetText(PortText);		
-		ConnectionText->SetText(ConnectedText);
+		SetConnectionStatus(CachedDataService->bIsConnected);
 	}
 }
 
@@ -79,14 +78,24 @@ void UOrbiterConnectionWidget::OnConnectionButtonReleased()
 	if (!CachedDataService)
 		return;
 
-	if (CachedDataService->bIsConnected)
+	SetConnectionStatus(CachedDataService->bIsConnected);
+}
+
+void UOrbiterConnectionWidget::SetConnectionStatus(const bool& bIsConnected)
+{
+	if (bIsConnected)
 	{
 		CachedDataService->Disconnect();
 		ConnectionText->SetText(FText::FromString("Connect"));
+		StatusTextBlock->SetText(FText::FromString("Not Connected"));
+		StatusTextBlock->SetColorAndOpacity(FLinearColor::Red);
 	}
 	else
 	{
 		CachedDataService->Connect();
 		ConnectionText->SetText(FText::FromString("Disconnect"));
+		StatusTextBlock->SetText(FText::FromString("Connected"));
+		StatusTextBlock->SetColorAndOpacity(FLinearColor::Green);
 	}
 }
+

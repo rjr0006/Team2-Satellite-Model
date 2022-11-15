@@ -32,7 +32,6 @@ public:
 	FQuat EciRotation;
 	/* Earth Centered Earth Fixed Rotation */
 	FQuat EcefRotation;
-	FRotator ECEFRot;
 };
 
 

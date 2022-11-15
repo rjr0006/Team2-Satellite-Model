@@ -132,7 +132,7 @@ void UOrbiterMovementComponent::TickMovement(float DeltaTime, const FBodyState& 
 	if (!DataService)
 		return;
 
-	AGeoReferencingSystem* GeoSystem = DataService->CachedGeoSystem;
+	TObjectPtr<AGeoReferencingSystem> GeoSystem = DataService->CachedGeoSystem;
 
 	if (!GeoSystem)
 		return;
@@ -150,7 +150,7 @@ void UOrbiterMovementComponent::TickMovement(float DeltaTime, const FBodyState& 
 
     FRotator Rot;
    
-    OrientationStates(GeoSystem->GetTangentTransformAtECEFLocation(NewState.Ecef), NewState.LatLongAlt, NewState.ECEFRot, Rot);
+    //OrientationStates(GeoSystem->GetTangentTransformAtECEFLocation(NewState.Ecef), NewState.LatLongAlt, NewState.ECEFRot, Rot);
 
 
     ////store heading, pitch, and yaw for Unreal frame

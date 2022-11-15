@@ -47,20 +47,25 @@ private:
 	 * @brief Callback when the connection button is released. 
 	 */
 	UFUNCTION()
-	void OnConnectionButtonReleased();
+	void OnConnectionButtonReleased();	
+	/**
+	* @brief Set the connections status for this widget. 
+	* @param bIsConnected - Whether the app is connected or not. 
+	*/
+	void SetConnectionStatus(const bool& bIsConnected);
 protected:
 	/* Text box for the user to set the ip address. */
 	UPROPERTY(meta = (BindWidget))
-	UEditableText* AddressTextBox;
+	TObjectPtr<UEditableText> AddressTextBox;
 	/* Text box for the user to set the port number. */
 	UPROPERTY(meta = (BindWidget))
-	UEditableText* PortTextBox;
+	TObjectPtr<UEditableText> PortTextBox;
 	/* Button that connects / disconnects */
 	UPROPERTY(meta = (BindWidget))
-	UButton* ConnectionButton;
+	TObjectPtr<UButton> ConnectionButton;
 	/* Text within the connection button. */
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* ConnectionText;
+	TObjectPtr<UTextBlock> ConnectionText;
 	/**
 	 *  Displays connection status 
 	 * 	TODO: Change text color with status. 
