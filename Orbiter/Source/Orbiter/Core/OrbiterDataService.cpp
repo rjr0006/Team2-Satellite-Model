@@ -9,8 +9,15 @@
 
 namespace
 {
+	/* The command line argument string */
 	static const FString CommandLineArg("tx");
 
+	/**
+	* @brief Parse the binary data and build the body state structure. 
+	* 
+	* @param Data		- In binary data to parse. 
+	* @param BodyState	- Build body state data. 
+	*/
 	void ParseBodyStateData(uint8* Data, FBodyState& BodyState)
 	{
 		memcpy(&BodyState.UtcTime, Data, sizeof(double));
@@ -18,48 +25,21 @@ namespace
 
 		memcpy(&BodyState.LatLongAlt, Data, sizeof(FVector3d));
 		Data += sizeof(FVector3d);
-		/*double Latitude, Longitude, Altitude;
-		memcpy(&Latitude, Data, sizeof(double));
-		Data += sizeof(double);
-		memcpy(&Longitude, Data, sizeof(double));
-		Data += sizeof(double);
-		memcpy(&Altitude, Data, sizeof(double));
-		Data += sizeof(double);*/
 
 		memcpy(&BodyState.Ecef, Data, sizeof(FVector3d));
 		Data += sizeof(FVector3d);
-		/*double EcefX, EcefY, EcefZ;
-		memcpy(&EcefX, Data, sizeof(double));
-		Data += sizeof(double);
-		memcpy(&EcefY, Data, sizeof(double));
-		Data += sizeof(double);
-		memcpy(&EcefZ, Data, sizeof(double));
-		Data += sizeof(double);*/
 
 		memcpy(&BodyState.EcefVelocity, Data, sizeof(FVector3d));
 		Data += sizeof(FVector3d);
-		//double EcefVX, EcefVY, EcefVZ;
-		//memcpy(&EcefVX, Data, sizeof(double));
-		//Data += sizeof(double);
-		//memcpy(&EcefVY, Data, sizeof(double));
-		//Data += sizeof(double);
-		//memcpy(&EcefVZ, Data, sizeof(double));
-		//Data += sizeof(double);
 
 		memcpy(&BodyState.EcefRotation, Data, sizeof(FQuat));
-		//memcpy(&BodyState.EcefRotation, Data, sizeof(FQuat));
-		//memcpy(&BodyState.ECEFRot, Data, sizeof(FRotator));
-
-		/*double RotZ, RotY, RotX;
-		memcpy(&RotZ, Data, sizeof(double));
-		Data += sizeof(double);
-		memcpy(&RotY, Data, sizeof(double));
-		Data += sizeof(double);
-		memcpy(&RotX, Data, sizeof(double));
-		Data += sizeof(double);*/
-
 	}
 
+	/**
+	* @brief Create a movement component for an actor. 
+	* 
+	* @param Actor - actor object to create the component for. 
+	*/
 	void CreateMovementComponentForActor(TObjectPtr<AActor> Actor)
 	{
 		auto MoveComp = NewObject<UOrbiterMovementComponent>(Actor);
@@ -68,7 +48,6 @@ namespace
 			MoveComp->RegisterComponent();
 		}
 	}
-
 }
 
 AOrbiterDataService::AOrbiterDataService()
@@ -166,7 +145,6 @@ void AOrbiterDataService::Tick(float DeltaTime)
 		{
 			CreateSatellite();
 		}
-
 	}
 
 	if (MovementComponent)
@@ -207,22 +185,24 @@ void AOrbiterDataService::Disconnect()
 void AOrbiterDataService::CreateSatellite()
 {
 	TObjectPtr<UClass> SatelliteClassToSpawn = SatelliteActorClass.TryLoadClass<UObject>();
-	if (SatelliteClassToSpawn)
+	if (!SatelliteClassToSpawn)
 	{
-		Satellite = GetWorld()->SpawnActor(SatelliteClassToSpawn);
-
-		// If the satellite doesn't have a movement component, add a default one so it at least
-		// updates location 
-		if (!Satellite->GetComponentByClass(UOrbiterMovementComponent::StaticClass()))
-		{
-			CreateMovementComponentForActor(Satellite);
-		}
-
-		// Notify all components that the owner registered
-		MovementComponent = Cast<UOrbiterMovementComponent>(Satellite->GetComponentByClass(UOrbiterMovementComponent::StaticClass()));
-		MovementComponent->RegisterWithService(this);
-
-		// Notify all the satellite actor has been spawned. 
-		OnSatelliteSpawned.Broadcast(Satellite);		
+		return;
 	}
+
+	Satellite = GetWorld()->SpawnActor(SatelliteClassToSpawn);
+
+	// If the satellite doesn't have a movement component, add a default one so it at least
+	// updates location 
+	if (!Satellite->GetComponentByClass(UOrbiterMovementComponent::StaticClass()))
+	{
+		CreateMovementComponentForActor(Satellite);
+	}
+
+	// Notify all components that the owner registered
+	MovementComponent = Cast<UOrbiterMovementComponent>(Satellite->GetComponentByClass(UOrbiterMovementComponent::StaticClass()));
+	MovementComponent->RegisterWithService(this);
+
+	// Notify all the satellite actor has been spawned. 
+	OnSatelliteSpawned.Broadcast(Satellite);		
 }
