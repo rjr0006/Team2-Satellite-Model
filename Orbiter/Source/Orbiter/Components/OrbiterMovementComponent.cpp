@@ -10,7 +10,7 @@ namespace
 
     FBodyState PerformDeadReckoning(const float DeltaTime, const FBodyState& InBodyState)
 	{
-		FBodyState UpdatedState;
+		FBodyState UpdatedState = InBodyState;
 		UpdatedState.Ecef = InBodyState.Ecef + InBodyState.EcefVelocity * DeltaTime;
 		return UpdatedState;
 	}
@@ -62,14 +62,14 @@ void UOrbiterMovementComponent::TickMovement(float DeltaTime, const FBodyState& 
 	const float Statetime = NewState.UtcTime;
 	const float UpdateDeltaTime = DataService->SimulationTime - NewState.UtcTime;
 	
-	const FBodyState DisBasedStateResult = PerformDeadReckoning(UpdateDeltaTime, NewState);
+	const FBodyState StateResult = PerformDeadReckoning(UpdateDeltaTime, NewState);
 
 	// Location
 	FVector Location;
-	GeoSystem->ECEFToEngine(NewState.Ecef, Location);
+	GeoSystem->ECEFToEngine(StateResult.Ecef, Location);
 
 
-    FRotator Rot = QuatToRotator(NewState.EcefRotation);
+    FRotator Rot = QuatToRotator(StateResult.EcefRotation);
    
     //OrientationStates(GeoSystem->GetTangentTransformAtECEFLocation(NewState.Ecef), NewState.LatLongAlt, NewState.ECEFRot, Rot);
 
