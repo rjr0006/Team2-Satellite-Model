@@ -94,11 +94,9 @@ void UOrbiterConnectionWidget::SetConnectionStatus(const bool& bIsConnected)
 	}
 	else
 	{
-
 		ConnectionText->SetText(FText::FromString("Connect"));
 		StatusTextBlock->SetText(FText::FromString("Not Connected"));
 		StatusTextBlock->SetColorAndOpacity(FLinearColor::Red);
-
 	}
 }
 

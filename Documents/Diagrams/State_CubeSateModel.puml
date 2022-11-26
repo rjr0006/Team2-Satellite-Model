@@ -1,0 +1,20 @@
+@startuml
+
+[*] --> Initialize
+
+state "Initialize Model" as Initialize 
+
+Initialize -> UpdateModel
+
+state "Update Model" as UpdateModel {
+    state "Step Model" as step
+    state "Pack Data" as pack
+    state "Distribute Data" as send
+    [*] -> step
+    step --> pack
+    pack -> send
+    send -> step
+}
+
+UpdateModel --> [*] : Abort / Stop
+@enduml

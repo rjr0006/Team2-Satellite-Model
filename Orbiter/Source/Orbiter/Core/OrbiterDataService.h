@@ -82,15 +82,18 @@ public:
 	/* Cached geo reference system */
 	UPROPERTY()
 	TObjectPtr<AGeoReferencingSystem> CachedGeoSystem;
+	/* Current simulation time */
+	UPROPERTY()
+	float SimulationTime;
+protected:
+
 	/* Cached satellite actor */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<AActor> Satellite;
 	// Could be changed to a TArray for multiple satellites. 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UOrbiterMovementComponent> MovementComponent;
-	/* Current simulation time */
-	UPROPERTY()
-	float SimulationTime;
+
 private:
 	/* Current connection */
 	TSharedPtr<FSocket> SocketPtr;

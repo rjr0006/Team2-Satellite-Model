@@ -40,9 +40,9 @@ public:
 	 * @param EcefToEnu 	- The Ecef to Enu frame
 	 * @param LLA 			- Latitude, Longitude, and Altitude
 	 * @param Rotation 		- Body state euler angles
-	 * @param OutRotation 	- Computed rotation
+	 * @return				- Computed rotation
 	 */
-	void OrientationStates(FTransform EcefToEnu, FVector3d LLA, FRotator Rotation, FRotator& OutRotation);
+	FRotator OrientationStates(FTransform EcefToEnu, FVector3d LLA, FRotator Rotation);
 
 	UFUNCTION(BlueprintCallable)
 	void ConvertRotation(FRotator& OutRotation);

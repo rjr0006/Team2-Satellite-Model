@@ -88,7 +88,7 @@ void UOrbiterMovementComponent::TickMovement(float DeltaTime, const FBodyState& 
 
 }
 
-void UOrbiterMovementComponent::OrientationStates(FTransform EcefToEnu, FVector3d LLA, FRotator Rotation, FRotator& OutRotation)
+FRotator UOrbiterMovementComponent::OrientationStates(FTransform EcefToEnu, FVector3d LLA, FRotator Rotation)
 {
 	const double EntityLatRadians = DegToRad(LLA.X);
 	const double EntityLonRadians = DegToRad(LLA.Y);
@@ -114,9 +114,7 @@ void UOrbiterMovementComponent::OrientationStates(FTransform EcefToEnu, FVector3
     //OutRotation = FRotator(PitchDegrees, HeadingDegrees, RollDegrees);
 
 	const FQuat NorthQuat = (-(EcefToEnu.GetUnitAxis(EAxis::Y))).ToOrientationQuat();
-	OutRotation = (NorthQuat * LocalRotation.Quaternion()).Rotator();
-
-
+	return (NorthQuat * LocalRotation.Quaternion()).Rotator();
 }
 
 void UOrbiterMovementComponent::ConvertRotation(FRotator& OutRotation)

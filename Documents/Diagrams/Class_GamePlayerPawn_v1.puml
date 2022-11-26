@@ -1,0 +1,53 @@
+
+@startuml
+class OrbiterDataService {
+    /' public methods '/
+    +void : BeginPlay()
+    +void : Tick(float DeltaTime)
+    +AOrbiterDataService* : GetDataService(UObject* Context)
+    +void : Connect()
+    +void : Disconnect()
+    +FSatelliteSpawned& : GetSatelliteSpawnedDelegate()
+    /' private methods '/
+    -void : CreateSatellite()
+    /' public variables '/
+    +FSoftClassPath : SatelliteActorClass
+    +FString : IpAddress
+    +int32 : Port
+    +bool : bIsConnected
+    +AGeoReferenceSystem* : CachedGeoSystem
+    +float : SimulationTime
+    /' protected variables '/
+    #Actor* : Satellite
+    /' private variables '/
+    -FSocket : SocketPtr
+    -FSatelliteSpawned : OnSatelliteSpawnd
+    -int32 : Port
+    -bool : bIsConnected
+    -AGeoReferenceSystem* : CachedGeoSystem
+    -float : SimulationTime
+
+}
+
+class UOrbiterMovementComponent {
+    /' public methods '/
+    +void : RegisterWithService(AOrbiterDataService* InDataService);
+    +void : TickMovement(float DeltaTime, const FBodyState& NewState);
+    +FRotator : OrientationStates(FTransform EcefToEnu, FVector3d LLA, FRotator Rotation);
+    /' public variables '/
+    +AOrbiterDataService* : DataService
+}
+
+struct FBodyState {
+	+double : UtcTime;
+	+FVector3d : LatLongAlt;
+	+FVector3d : Ecef;
+	+FVector3d : EcefVelocity;
+	+FQuat : EciRotation;
+	+FQuat : EcefRotation;
+}
+
+OrbiterDataService *- "1" UOrbiterMovementComponent : updates
+UOrbiterMovementComponent *-- "1" FBodyState : converts
+
+@enduml
