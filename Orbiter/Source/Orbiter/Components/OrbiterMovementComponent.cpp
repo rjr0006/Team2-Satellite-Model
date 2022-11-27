@@ -57,8 +57,6 @@ void UOrbiterMovementComponent::TickMovement(float DeltaTime, const FBodyState& 
 	if (!GeoSystem)
 		return;
 
-	const float SimTime = DataService->SimulationTime;
-	const float Statetime = NewState.UtcTime;
 	const float UpdateDeltaTime = DataService->SimulationTime - NewState.UtcTime;
 	
 	const FBodyState StateResult = PerformDeadReckoning(UpdateDeltaTime, NewState);
