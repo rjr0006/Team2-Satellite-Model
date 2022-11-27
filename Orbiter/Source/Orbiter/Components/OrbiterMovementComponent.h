@@ -34,26 +34,9 @@ public:
 	 * @param NewState 	- The new state data. 
 	 */
 	void TickMovement(float DeltaTime, const FBodyState& NewState);
-	/**
-	 * @brief Compute the orientation of the satellite
-	 * 
-	 * @param EcefToEnu 	- The Ecef to Enu frame
-	 * @param LLA 			- Latitude, Longitude, and Altitude
-	 * @param Rotation 		- Body state euler angles
-	 * @return				- Computed rotation
-	 */
-	FRotator OrientationStates(FTransform EcefToEnu, FVector3d LLA, FRotator Rotation);
-
-	UFUNCTION(BlueprintCallable)
-	void ConvertRotation(FRotator& OutRotation);
 
 public:
  	/* Cached data service */
 	UPROPERTY()
 	TObjectPtr<AOrbiterDataService> DataService;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FQuat TestQuat { (-0.306335, 0.881598, -0.036695, 0.357207) };
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FVector TestLoc{ (-5032439.114494, -2329652.185219, 3902868.001784) };
 };

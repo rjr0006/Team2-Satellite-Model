@@ -32,6 +32,9 @@ namespace
 		memcpy(&BodyState.EcefVelocity, Data, sizeof(FVector3d));
 		Data += sizeof(FVector3d);
 
+		memcpy(&BodyState.EciRotation, Data, sizeof(FQuat));
+		Data += sizeof(FQuat);
+
 		memcpy(&BodyState.EcefRotation, Data, sizeof(FQuat));
 	}
 
